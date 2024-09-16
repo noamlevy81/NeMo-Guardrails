@@ -19,6 +19,7 @@ from typing import Optional
 from nemoguardrails.actions import action
 from nemoguardrails.library.jailbreak_detection.request import (
     jailbreak_detection_heuristics_request,
+    jailbreak_detection_model_request,
 )
 from nemoguardrails.llm.taskmanager import LLMTaskManager
 
@@ -28,7 +29,7 @@ log = logging.getLogger(__name__)
 @action()
 async def jailbreak_detection_heuristics(
     llm_task_manager: LLMTaskManager, context: Optional[dict] = None
-):
+) -> bool:
     """Checks the user's prompt to determine if it is attempt to jailbreak the model."""
     jailbreak_config = llm_task_manager.config.rails.config.jailbreak_detection
 
@@ -63,3 +64,55 @@ async def jailbreak_detection_heuristics(
         return False
     else:
         return jailbreak
+
+
+@action()
+async def jailbreak_detection_model(
+    llm_task_manager: LLMTaskManager,
+    embedding_name: Optional[str] = None,
+    context: Optional[dict] = None,
+) -> bool:
+    prompt: str = ""
+    """Uses a trained classifier to determine if a user input is a jailbreak attempt"""
+    jailbreak_config = llm_task_manager.config.rails.config.jailbreak_detection
+
+    jailbreak_api_url = jailbreak_config.server_endpoint
+
+    if context is not None:
+        prompt = context.get("user_message", "")
+        embedding_name = embedding_name or context.get("embedding", None)
+
+    embedding_name = (
+        jailbreak_config.embedding if embedding_name is not None else embedding_name
+    )
+
+    if embedding_name is None:
+        error_msg = (
+            "Embedding model name is required for jailbreak check, "
+            "please provide it as an argument in the config.yml. "
+            "e.g. jailbreak model input $embedding=nvidia/nv-embedqa-mistral-7b-v2"
+        )
+        raise ValueError(error_msg)
+
+    if not jailbreak_api_url:
+        from nemoguardrails.library.jailbreak_detection.model_based.checks import (
+            check_jailbreak,
+        )
+
+        log.warning(
+            "No jailbreak heuristics endpoint set. Running in-process, NOT RECOMMENDED FOR PRODUCTION."
+        )
+        jailbreak = check_jailbreak(prompt=prompt, embedder=embedding_name)
+
+        return jailbreak["jailbreak"]
+
+    jailbreak = await jailbreak_detection_model_request(
+        prompt=prompt, embedding_model=embedding_name, api_url=jailbreak_api_url
+    )
+
+    if jailbreak is None:
+        log.warning("Jailbreak endpoint not set up properly.")
+        # If no result, assume not a jailbreak
+        return False
+    else:
+        return jailbreak["jailbreak"]

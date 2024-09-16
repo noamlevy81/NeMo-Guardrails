@@ -19,7 +19,8 @@ from typing import Optional
 import typer
 import uvicorn
 from fastapi import FastAPI
-from heuristics import checks
+import heuristics.checks as hc
+import model_based.checks as mc
 from pydantic import BaseModel
 
 app = FastAPI()
@@ -28,7 +29,7 @@ cli_app = typer.Typer()
 device = os.environ.get("JAILBREAK_CHECK_DEVICE", "cpu")
 
 
-class JailbreakCheckRequest(BaseModel):
+class JailbreakHeuristicRequest(BaseModel):
     """
     prompt (str): User utterance to the model
     lp_threshold (float): Threshold value for length-perplexity heuristic. Default: 89.79
@@ -40,37 +41,50 @@ class JailbreakCheckRequest(BaseModel):
     ps_ppl_threshold: Optional[float] = 1845.65
 
 
+class JailbreakModelRequest(BaseModel):
+    """
+    Since the embedding model corresponds exactly to the classifier, we only need to provide the embedding model in the request.
+
+    prompt (str): User utterance to the model
+    embedding_model (str): Name of the embedding model to use
+    """
+
+    prompt: str
+    embedding_model: str
+
+
 @app.get("/")
 def hello_world():
     welcome_str = (
         "This is a development server for jailbreak detection.\n"
         "Hit the /heuristics endpoint to run all heuristics by sending a POST request with the user prompt.\n"
+        "Hit the /model endpoint to run against the loaded classifier by sending a POST request with the user prompt."
         "Detailed documentation and all endpoints are included in the README."
     )
     return welcome_str
 
 
 @app.post("/jailbreak_lp_heuristic")
-def lp_heuristic_check(request: JailbreakCheckRequest):
-    return checks.check_jailbreak_length_per_perplexity(
+def lp_heuristic_check(request: JailbreakHeuristicRequest):
+    return hc.check_jailbreak_length_per_perplexity(
         request.prompt, request.lp_threshold
     )
 
 
 @app.post("/jailbreak_ps_heuristic")
-def ps_ppl_heuristic_check(request: JailbreakCheckRequest):
-    return checks.check_jailbreak_prefix_suffix_perplexity(
+def ps_ppl_heuristic_check(request: JailbreakHeuristicRequest):
+    return hc.check_jailbreak_prefix_suffix_perplexity(
         request.prompt, request.ps_ppl_threshold
     )
 
 
 @app.post("/heuristics")
-def run_all_heuristics(request: JailbreakCheckRequest):
+def run_all_heuristics(request: JailbreakHeuristicRequest):
     # Will add other heuristics as they become available
-    lp_check = checks.check_jailbreak_length_per_perplexity(
+    lp_check = hc.check_jailbreak_length_per_perplexity(
         request.prompt, request.lp_threshold
     )
-    ps_ppl_check = checks.check_jailbreak_prefix_suffix_perplexity(
+    ps_ppl_check = hc.check_jailbreak_prefix_suffix_perplexity(
         request.prompt, request.ps_ppl_threshold
     )
     jailbreak = any([lp_check["jailbreak"], ps_ppl_check["jailbreak"]])
@@ -82,13 +96,30 @@ def run_all_heuristics(request: JailbreakCheckRequest):
     return heuristic_checks
 
 
+@app.post("/model")
+def run_model_check(request: JailbreakModelRequest):
+    embedder, classifier = mc.initialize_model(embedding_model=request.embedding_model)
+    jailbreak = mc.check_jailbreak(
+        request.prompt, embedder=embedder, classifier=classifier
+    )
+    model_checks = {
+        "jailbreak": jailbreak,
+    }
+    return model_checks
+
+
 @cli_app.command()
 def start(
     port: int = typer.Option(
         default=1337, help="The port that the server should listen on."
     ),
+    embedding_model: str = typer.Option(
+        default="nvidia/nv-embedqa-e5-v5",
+        help="The name of the embedding model.",
+    ),
     host: str = typer.Option(default="0.0.0.0", help="IP address of the host"),
 ):
+    embedder, classifier = mc.initialize_model(embedding_model=embedding_model)
     uvicorn.run(app, host=host, port=port)
 
 

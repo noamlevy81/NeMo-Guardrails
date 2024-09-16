@@ -50,3 +50,32 @@ async def jailbreak_detection_heuristics_request(
                 log.exception("No jailbreak field in result.")
                 result = None
             return result
+
+
+async def jailbreak_detection_model_request(
+    prompt: str,
+    embedding_model: str,
+    api_url: str = "http://localhost:1337/model",
+):
+    payload = {
+        "prompt": prompt,
+        "embedding_model": embedding_model,
+    }
+
+    async with aiohttp.ClientSession() as session:
+        async with session.post(api_url, json=payload) as resp:
+            if resp.status != 200:
+                log.error(
+                    f"Jailbreak check API request failed with status {resp.status}"
+                )
+                return None
+
+            result = await resp.json()
+
+            log.info(f"Prompt jailbreak check: {result}.")
+            try:
+                result = result["jailbreak"]
+            except KeyError:
+                log.exception("No jailbreak field in result.")
+                result = None
+            return result
