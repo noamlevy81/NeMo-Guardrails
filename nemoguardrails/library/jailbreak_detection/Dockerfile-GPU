@@ -32,6 +32,9 @@ WORKDIR /models
 RUN git clone https://huggingface.co/nvidia/embedding-jailbreak-detection
 ENV EMBEDDING_CLASSIFIER_PATH=/models/embedding-jailbreak-detection
 
+# To use nvidia/nv-embedqa-e5-v5 model, uncomment the line below and set your API key
+# ENV NVIDIA_API_KEY=<your_api_key>
+
 # Expose a port for the server
 EXPOSE 1337
 

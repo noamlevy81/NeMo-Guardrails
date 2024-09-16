@@ -114,7 +114,7 @@ def start(
         default=1337, help="The port that the server should listen on."
     ),
     embedding_model: str = typer.Option(
-        default="nvidia/nv-embedqa-e5-v5",
+        default="snowflake/snowflake-arctic-embed-m-long",
         help="The name of the embedding model.",
     ),
     host: str = typer.Option(default="0.0.0.0", help="IP address of the host"),

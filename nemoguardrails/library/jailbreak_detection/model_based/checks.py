@@ -33,7 +33,7 @@ def initialize_model(
         embedder: Either an NvEmbedE5 or SnowflakeEmbed object
         classifier: Corresponding RandomForestClassifier
     """
-    if embedding_model == "nvidia/nv-embedqa-e5-v5":
+    if embedding_model.lower() == "nvidia/nv-embedqa-e5-v5":
         embedder = NvEmbedE5()
         try:
             with open(Path(classifier_path).joinpath("nvembed.pkl"), "rb") as f:
@@ -42,7 +42,7 @@ def initialize_model(
             raise FileNotFoundError(
                 f"Encountered FileNotFound Error when attempting to open nvembed.pkl at {classifier_path}"
             )
-    elif embedding_model == "snowflake/snowflake-arctic-embed-m-long":
+    elif embedding_model.lower() == "snowflake/snowflake-arctic-embed-m-long":
         embedder = SnowflakeEmbed()
         try:
             with open(Path(classifier_path).joinpath("snowflake.pkl"), "rb") as f:
