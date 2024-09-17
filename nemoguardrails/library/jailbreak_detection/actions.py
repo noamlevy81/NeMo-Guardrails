@@ -46,7 +46,7 @@ async def jailbreak_detection_heuristics(
         )
 
         log.warning(
-            "No jailbreak heuristics endpoint set. Running in-process, NOT RECOMMENDED FOR PRODUCTION."
+            "No jailbreak detection endpoint set. Running in-process, NOT RECOMMENDED FOR PRODUCTION."
         )
         lp_check = check_jailbreak_length_per_perplexity(prompt, lp_threshold)
         ps_ppl_check = check_jailbreak_prefix_suffix_perplexity(
@@ -100,7 +100,7 @@ async def jailbreak_detection_model(
         )
 
         log.warning(
-            "No jailbreak heuristics endpoint set. Running in-process, NOT RECOMMENDED FOR PRODUCTION."
+            "No jailbreak detection endpoint set. Running in-process, NOT RECOMMENDED FOR PRODUCTION."
         )
         jailbreak = check_jailbreak(prompt=prompt, embedder=embedding_name)
 
