@@ -58,7 +58,7 @@ def test_jb_model_detected():
 @pytest.mark.skipif(not torch_available, reason="Pytorch not installed.")
 def test_safe():
     # Test 2 - user input should not be detected as a jailbreak
-    config = RailsConfig.from_path(os.path.join(CONFIGS_FOLDER, "jailbreak_heuristics"))
+    config = RailsConfig.from_path(os.path.join(CONFIGS_FOLDER, "jailbreak_models"))
     chat = TestChat(
         config,
         llm_completions=["  express greeting"],
