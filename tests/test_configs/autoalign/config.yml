@@ -11,7 +11,7 @@ rails:
       input:
         guardrails_config:
           {
-            "pii_fast":
+            "pii":
               {
                 "enabled_types":
                   [
@@ -115,7 +115,7 @@ rails:
       output:
         guardrails_config:
           {
-            "pii_fast":
+            "pii":
               {
                 "enabled_types":
                   [

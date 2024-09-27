@@ -44,7 +44,7 @@ rails:
             input:
                 guardrails_config:
                     {
-                      "pii_fast": {
+                      "pii": {
                           "enabled_types": [
                               "[BANK ACCOUNT NUMBER]",
                               "[CREDIT CARD NUMBER]",
@@ -153,7 +153,7 @@ rails:
             output:
                 guardrails_config:
                   {
-                      "pii_fast": {
+                      "pii": {
                           "enabled_types": [
                               "[BANK ACCOUNT NUMBER]",
                               "[CREDIT CARD NUMBER]",
@@ -299,8 +299,8 @@ define flow autoalign check output
     bot refuse to respond
     stop
   else
-    $pii_message_output = $output_result["pii_fast"]["response"]
-    if $output_result["pii_fast"]["guarded"]
+    $pii_message_output = $output_result["pii"]["response"]
+    if $output_result["pii"]["guarded"]
       bot respond pii output
       stop
 
@@ -455,8 +455,8 @@ define subflow autoalign check input
     $autoalign_input_response = $input_result['combined_response']
     bot refuse to respond
     stop
-  else if $input_result["pii_fast"] and $input_result["pii_fast"]["guarded"]:
-    $user_message = $input_result["pii_fast"]["response"]
+  else if $input_result["pii"] and $input_result["pii"]["guarded"]:
+    $user_message = $input_result["pii"]["response"]
 
 define subflow autoalign check output
   $output_result = execute autoalign_output_api(show_autoalign_message=True, show_toxic_phrases=True)
@@ -464,8 +464,8 @@ define subflow autoalign check output
     bot refuse to respond
     stop
   else
-    $pii_message_output = $output_result["pii_fast"]["response"]
-    if $output_result["pii_fast"]["guarded"]
+    $pii_message_output = $output_result["pii"]["response"]
+    if $output_result["pii"]["guarded"]
       $bot_message = $pii_message_output
 
 define subflow autoalign factcheck output
@@ -483,7 +483,7 @@ define bot refuse to respond
 ### PII
 
 To use AutoAlign's PII (Personal Identifiable Information) module, you have to list the entities that you wish to redact
-in `enabled_types` in the dictionary of `guardrails_config` under the key of `pii_fast`; if not listed then all PII types will be redacted.
+in `enabled_types` in the dictionary of `guardrails_config` under the key of `pii`; if not listed then all PII types will be redacted.
 
 The above sample shows all PII entities that is currently being supported by AutoAlign.
 
@@ -498,7 +498,7 @@ You have to define the config for output and input side separately based on wher
 Example PII config:
 
 ```yaml
-"pii_fast": {
+"pii": {
   "enabled_types": [
       "[BANK ACCOUNT NUMBER]",
       "[CREDIT CARD NUMBER]",

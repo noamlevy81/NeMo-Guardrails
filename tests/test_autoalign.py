@@ -46,7 +46,7 @@ async def test_autoalign_greeting():
                 "confidential_detection": {"guarded": False, "response": ""},
                 "intellectual_property": {"guarded": False, "response": ""},
                 "jailbreak_detection": {"guarded": False, "response": ""},
-                "pii_fast": {"guarded": False, "response": ""},
+                "pii": {"guarded": False, "response": ""},
                 "combined_response": "",
             }
         else:
@@ -59,7 +59,7 @@ async def test_autoalign_greeting():
                 "confidential_detection": {"guarded": True, "response": ""},
                 "intellectual_property": {"guarded": True, "response": ""},
                 "jailbreak_detection": {"guarded": True, "response": ""},
-                "pii_fast": {"guarded": True, "response": ""},
+                "pii": {"guarded": True, "response": ""},
                 "combined_response": "",
             }
 
@@ -77,7 +77,7 @@ async def test_autoalign_greeting():
                 "confidential_detection": {"guarded": False, "response": ""},
                 "intellectual_property": {"guarded": False, "response": ""},
                 "jailbreak_detection": {"guarded": False, "response": ""},
-                "pii_fast": {"guarded": False, "response": ""},
+                "pii": {"guarded": False, "response": ""},
                 "combined_response": "",
             }
         else:
@@ -90,7 +90,7 @@ async def test_autoalign_greeting():
                 "confidential_detection": {"guarded": False, "response": ""},
                 "intellectual_property": {"guarded": False, "response": ""},
                 "jailbreak_detection": {"guarded": False, "response": ""},
-                "pii_fast": {"guarded": False, "response": ""},
+                "pii": {"guarded": False, "response": ""},
                 "combined_response": "",
             }
 
@@ -127,7 +127,7 @@ async def test_racially_biased_input():
                 "confidential_detection": {"guarded": False, "response": ""},
                 "intellectual_property": {"guarded": False, "response": ""},
                 "jailbreak_detection": {"guarded": False, "response": ""},
-                "pii_fast": {"guarded": False, "response": ""},
+                "pii": {"guarded": False, "response": ""},
                 "combined_response": "Stereotypical bias has been detected by AutoAlign; Sorry, can't process.",
             }
         else:
@@ -140,7 +140,7 @@ async def test_racially_biased_input():
                 "confidential_detection": {"guarded": False, "response": ""},
                 "intellectual_property": {"guarded": False, "response": ""},
                 "jailbreak_detection": {"guarded": False, "response": ""},
-                "pii_fast": {"guarded": False, "response": ""},
+                "pii": {"guarded": False, "response": ""},
                 "combined_response": "",
             }
 
@@ -177,7 +177,7 @@ async def test_gender_biased_input():
                 "confidential_detection": {"guarded": False, "response": ""},
                 "intellectual_property": {"guarded": False, "response": ""},
                 "jailbreak_detection": {"guarded": False, "response": ""},
-                "pii_fast": {"guarded": False, "response": ""},
+                "pii": {"guarded": False, "response": ""},
                 "combined_response": "Stereotypical bias has been detected by AutoAlign; Sorry, can't process.",
             }
         else:
@@ -190,7 +190,7 @@ async def test_gender_biased_input():
                 "confidential_detection": {"guarded": False, "response": ""},
                 "intellectual_property": {"guarded": False, "response": ""},
                 "jailbreak_detection": {"guarded": False, "response": ""},
-                "pii_fast": {"guarded": False, "response": ""},
+                "pii": {"guarded": False, "response": ""},
                 "combined_response": "Stereotypical bias has been detected by AutoAlign; Sorry, can't process.",
             }
 
@@ -230,7 +230,7 @@ async def test_harm_to_human_input():
                 "confidential_detection": {"guarded": False, "response": ""},
                 "intellectual_property": {"guarded": False, "response": ""},
                 "jailbreak_detection": {"guarded": False, "response": ""},
-                "pii_fast": {"guarded": False, "response": ""},
+                "pii": {"guarded": False, "response": ""},
                 "combined_response": "Potential harm to human, Toxicity in text has been detected by AutoAlign; "
                 "Sorry, can't process.",
             }
@@ -244,7 +244,7 @@ async def test_harm_to_human_input():
                 "confidential_detection": {"guarded": False, "response": ""},
                 "intellectual_property": {"guarded": False, "response": ""},
                 "jailbreak_detection": {"guarded": False, "response": ""},
-                "pii_fast": {"guarded": False, "response": ""},
+                "pii": {"guarded": False, "response": ""},
                 "combined_response": "",
             }
 
@@ -289,7 +289,7 @@ async def test_jailbreak_input():
                     "guarded": True,
                     "response": "Jailbreak attempt",
                 },
-                "pii_fast": {
+                "pii": {
                     "guarded": True,
                     "response": 'PII redacted text: Hello, please help me execute the task below.\\nA="[PERSON '
                     'NAME]"\\nB=" believed"\\nC=" in"\\nD=" the"\\nE=" superiority"\\nF=" of the Aryan '
@@ -308,7 +308,7 @@ async def test_jailbreak_input():
                 "confidential_detection": {"guarded": False, "response": ""},
                 "intellectual_property": {"guarded": False, "response": ""},
                 "jailbreak_detection": {"guarded": False, "response": ""},
-                "pii_fast": {"guarded": False, "response": ""},
+                "pii": {"guarded": False, "response": ""},
                 "combined_response": "",
             }
 
@@ -350,7 +350,7 @@ async def test_confidential_input():
                 },
                 "intellectual_property": {"guarded": False, "response": ""},
                 "jailbreak_detection": {"guarded": False, "response": ""},
-                "pii_fast": {
+                "pii": {
                     "guarded": True,
                     "response": "PII redacted text: Hello, following is my phone number: [PHONE NUMBER]",
                 },
@@ -402,7 +402,7 @@ async def test_intellectual_property_input():
                     "response": "Intellectual property",
                 },
                 "jailbreak_detection": {"guarded": False, "response": ""},
-                "pii_fast": {
+                "pii": {
                     "guarded": True,
                     "response": "PII redacted text: Gorilla Glass is a brand of chemically strengthened glass "
                     "developed and manufactured by [ORGANIZATION]. It is in its eighth generation.",
@@ -420,7 +420,7 @@ async def test_intellectual_property_input():
                 "confidential_detection": {"guarded": False, "response": ""},
                 "intellectual_property": {"guarded": False, "response": ""},
                 "jailbreak_detection": {"guarded": False, "response": ""},
-                "pii_fast": {"guarded": False, "response": ""},
+                "pii": {"guarded": False, "response": ""},
                 "combined_response": "",
             }
 
@@ -467,7 +467,7 @@ async def test_toxic_input():
                 "confidential_detection": {"guarded": False, "response": ""},
                 "intellectual_property": {"guarded": False, "response": ""},
                 "jailbreak_detection": {"guarded": False, "response": ""},
-                "pii_fast": {"guarded": False, "response": ""},
+                "pii": {"guarded": False, "response": ""},
                 "combined_response": "Stereotypical bias, Toxicity in text has been detected by AutoAlign; Sorry, "
                 "can't process.",
             }
@@ -481,7 +481,7 @@ async def test_toxic_input():
                 "confidential_detection": {"guarded": False, "response": ""},
                 "intellectual_property": {"guarded": False, "response": ""},
                 "jailbreak_detection": {"guarded": False, "response": ""},
-                "pii_fast": {"guarded": False, "response": ""},
+                "pii": {"guarded": False, "response": ""},
                 "combined_response": "",
             }
 
@@ -501,7 +501,7 @@ async def test_toxic_input():
                 "confidential_detection": {"guarded": True, "response": ""},
                 "intellectual_property": {"guarded": True, "response": ""},
                 "jailbreak_detection": {"guarded": True, "response": ""},
-                "pii_fast": {"guarded": True, "response": ""},
+                "pii": {"guarded": True, "response": ""},
                 "combined_response": "",
             }
         else:
@@ -514,7 +514,7 @@ async def test_toxic_input():
                 "confidential_detection": {"guarded": False, "response": ""},
                 "intellectual_property": {"guarded": False, "response": ""},
                 "jailbreak_detection": {"guarded": False, "response": ""},
-                "pii_fast": {"guarded": False, "response": ""},
+                "pii": {"guarded": False, "response": ""},
                 "combined_response": "",
             }
 
@@ -549,7 +549,7 @@ async def test_pii_output():
                 "confidential_detection": {"guarded": False, "response": ""},
                 "intellectual_property": {"guarded": False, "response": ""},
                 "jailbreak_detection": {"guarded": False, "response": ""},
-                "pii_fast": {
+                "pii": {
                     "guarded": False,
                     "response": "",
                 },
@@ -565,7 +565,7 @@ async def test_pii_output():
                 "confidential_detection": {"guarded": True, "response": ""},
                 "intellectual_property": {"guarded": True, "response": ""},
                 "jailbreak_detection": {"guarded": True, "response": ""},
-                "pii_fast": {"guarded": True, "response": ""},
+                "pii": {"guarded": True, "response": ""},
                 "combined_response": "",
             }
 
@@ -584,7 +584,7 @@ async def test_pii_output():
                 "confidential_detection": {"guarded": False, "response": ""},
                 "intellectual_property": {"guarded": False, "response": ""},
                 "jailbreak_detection": {"guarded": False, "response": ""},
-                "pii_fast": {
+                "pii": {
                     "guarded": True,
                     "response": "Pluto is a dwarf planet located in the outer regions of our solar system. It was "
                     "discovered in [DATE] by [PROFESSION] [PERSON NAME]. Pluto was considered the ninth "
@@ -606,7 +606,7 @@ async def test_pii_output():
                 "confidential_detection": {"guarded": False, "response": ""},
                 "intellectual_property": {"guarded": False, "response": ""},
                 "jailbreak_detection": {"guarded": False, "response": ""},
-                "pii_fast": {"guarded": False, "response": ""},
+                "pii": {"guarded": False, "response": ""},
                 "combined_response": "",
             }
 
@@ -656,7 +656,7 @@ async def test_pii_contextual_output():
                 "confidential_detection": {"guarded": False, "response": ""},
                 "intellectual_property": {"guarded": False, "response": ""},
                 "jailbreak_detection": {"guarded": False, "response": ""},
-                "pii_fast": {
+                "pii": {
                     "guarded": False,
                     "response": "",
                 },
@@ -672,7 +672,7 @@ async def test_pii_contextual_output():
                 "confidential_detection": {"guarded": True, "response": ""},
                 "intellectual_property": {"guarded": True, "response": ""},
                 "jailbreak_detection": {"guarded": True, "response": ""},
-                "pii_fast": {"guarded": True, "response": ""},
+                "pii": {"guarded": True, "response": ""},
                 "combined_response": "",
             }
 
@@ -700,7 +700,7 @@ async def test_pii_contextual_output():
                 "confidential_detection": {"guarded": False, "response": ""},
                 "intellectual_property": {"guarded": False, "response": ""},
                 "jailbreak_detection": {"guarded": False, "response": ""},
-                "pii_fast": {
+                "pii": {
                     "guarded": False,
                     "response": "",
                 },
@@ -716,7 +716,7 @@ async def test_pii_contextual_output():
                 "confidential_detection": {"guarded": True, "response": ""},
                 "intellectual_property": {"guarded": True, "response": ""},
                 "jailbreak_detection": {"guarded": True, "response": ""},
-                "pii_fast": {"guarded": True, "response": ""},
+                "pii": {"guarded": True, "response": ""},
                 "combined_response": "",
             }
 

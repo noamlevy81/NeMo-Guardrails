@@ -39,7 +39,7 @@ GUARDRAIL_RESPONSE_TEXT = {
 }
 
 DEFAULT_CONFIG = {
-    "pii_fast": {
+    "pii": {
         "mode": "OFF",
         "mask": False,
         "enabled_types": [
@@ -85,7 +85,7 @@ def process_autoalign_output(responses: List[Any], show_toxic_phrases: bool = Fa
 
     response_dict = {
         "guardrails_triggered": False,
-        "pii_fast": {"guarded": False, "response": ""},
+        "pii": {"guarded": False, "response": ""},
     }
     prefixes = set()
     suffix = ""
@@ -99,9 +99,9 @@ def process_autoalign_output(responses: List[Any], show_toxic_phrases: bool = Fa
                     "guarded": True,
                     "response": [GUARDRAIL_RESPONSE_TEXT[response["task"]], suffix],
                 }
-            elif response["task"] == "pii_fast":
+            elif response["task"] == "pii":
                 start_index = len("PII redacted text: ")
-                response_dict["pii_fast"] = {
+                response_dict["pii"] = {
                     "guarded": True,
                     "response": response["response"][start_index:],
                 }
@@ -232,9 +232,9 @@ async def autoalign_input_api(
             f"AutoAlign on Input: {autoalign_response['combined_response']}",
         )
     else:
-        if autoalign_response["pii_fast"]["guarded"] and show_autoalign_message:
+        if autoalign_response["pii"]["guarded"] and show_autoalign_message:
             log.warning(
-                f"AutoAlign on Input: {autoalign_response['pii_fast']['response']}",
+                f"AutoAlign on Input: {autoalign_response['pii']['response']}",
             )
 
     return autoalign_response

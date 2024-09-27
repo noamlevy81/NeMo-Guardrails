@@ -12,7 +12,7 @@ rails:
             input:
                 guardrails_config:
                     {
-                      "pii_fast": {
+                      "pii": {
                           "enabled_types": [
                               "[BANK ACCOUNT NUMBER]",
                               "[CREDIT CARD NUMBER]",
@@ -40,7 +40,7 @@ rails:
             output:
                 guardrails_config:
                   {
-                      "pii_fast": {
+                      "pii": {
                           "enabled_types": [
                               "[BANK ACCOUNT NUMBER]",
                               "[CREDIT CARD NUMBER]",
