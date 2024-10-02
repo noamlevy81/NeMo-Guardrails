@@ -98,7 +98,7 @@ rails:
                               "[RELIGION]": 0.5
                           }
                         },
-                        "confidential_detection": {
+                        "confidential_info_detection": {
                               "matching_scores": {
                                   "No Confidential": 0.5,
                                   "Legal Documents": 0.5,
@@ -117,7 +117,7 @@ rails:
                                   "score": 0.5
                               }
                         },
-                        "text_toxicity_extraction": {
+                        "toxicity_detection": {
                               "matching_scores": {
                                   "score": 0.5
                               }
@@ -207,7 +207,7 @@ rails:
                               "[RELIGION]": 0.5
                           }
                       },
-                      "confidential_detection": {
+                      "confidential_info_detection": {
                           "matching_scores": {
                               "No Confidential": 0.5,
                               "Legal Documents": 0.5,
@@ -226,7 +226,7 @@ rails:
                               "score": 0.5
                           }
                       },
-                      "text_toxicity_extraction": {
+                      "toxicity_detection": {
                           "matching_scores": {
                               "score": 0.5
                           }
@@ -317,7 +317,7 @@ The actions `autoalign_input_api` and `autoalign_output_api` takes in two argume
 `show_toxic_phrases`. Both the arguments expect boolean value being passed to them. The default value of
 `show_autoalign_message` is `True` and for `show_toxic_phrases` is False. The `show_autoalign_message` controls whether
 we will show any output from autoalign or not. The response from AutoAlign would be presented as a subtext, when
-`show_autoalign_message` is kept `True`. Details regarding the second argument can be found in `text_toxicity_extraction`
+`show_autoalign_message` is kept `True`. Details regarding the second argument can be found in `toxicity_detection`
 section.
 
 
@@ -380,13 +380,13 @@ For intellectual property detection, the matching score has to be following form
 "matching_scores": { "score": 0.5}
 ```
 
-### Confidential detection
+### Confidential Info detection
 
-The goal of the confidential detection rail is to determine if the text has any kind of confidential information. This rail can be applied at both input and output.
-This guardrail can be added by adding `confidential_detection` key in the dictionary under `guardrails_config` section
+The goal of the confidential info detection rail is to determine if the text has any kind of confidential information. This rail can be applied at both input and output.
+This guardrail can be added by adding `confidential_info_detection` key in the dictionary under `guardrails_config` section
 which is under `input` or `output` section which should be in `autoalign` section in `config.yml`.
 
-For confidential detection, the matching score has to be following format:
+For confidential info detection, the matching score has to be following format:
 
 ```yaml
 "matching_scores": {
@@ -437,7 +437,7 @@ For tonal detection, the matching score has to be following format:
 ### Toxicity extraction
 
 The goal of the toxicity detection rail is to determine if the text has any kind of toxic content. This rail can be applied at both input and output. This guardrail not just detects the toxicity of the text but also extracts toxic phrases from the text.
-This guardrail can be added by adding `text_toxicity_extraction` key in the dictionary under `guardrails_config` section
+This guardrail can be added by adding `toxicity_detection` key in the dictionary under `guardrails_config` section
 which is under `input` or `output` section which should be in `autoalign` section in `config.yml`.
 
 For text toxicity detection, the matching score has to be following format:
@@ -468,11 +468,11 @@ define subflow autoalign check output
     if $output_result["pii"]["guarded"]
       $bot_message = $pii_message_output
 
-define subflow autoalign factcheck output
+define subflow autoalign groundedness output
   if $check_facts == True
     $check_facts = False
     $threshold = 0.5
-    $output_result = execute autoalign_factcheck_output_api(factcheck_threshold=$threshold, show_autoalign_message=True)
+    $output_result = execute autoalign_groundedness_output_api(factcheck_threshold=$threshold, show_autoalign_message=True)
     bot provide response
 
 define bot refuse to respond
@@ -554,9 +554,9 @@ Example PII config:
 }
 ```
 
-### Factcheck or Groundness Check
-The factcheck needs an input statement (represented as ‘prompt’) as a list of evidence documents.
-To use AutoAlign's factcheck module, you have to modify the `config.yml` in the following format:
+### Groundness Check
+The groundness check needs an input statement (represented as ‘prompt’) as a list of evidence documents.
+To use AutoAlign's groundness check module, you have to modify the `config.yml` in the following format:
 
 ```yaml
 rails:
@@ -564,18 +564,18 @@ rails:
     autoalign:
       guardrails_config:
         {
-          "factcheck":{
+          "groundedness_checker":{
             "verify_response": false
           }
         }
       parameters:
-        fact_check_endpoint: "https://<AUTOALIGN_ENDPOINT>/factcheck"
+        groundedness_check_endpoint: "https://<AUTOALIGN_ENDPOINT>/groundedness_check"
   output:
     flows:
-      - autoalign factcheck output
+      - autoalign groundedness output
 ```
 
-Specify the factcheck endpoint the parameters section of autoalign's config.
+Specify the groundness endpoint the parameters section of autoalign's config.
 Then, you have to call the corresponding subflows for factcheck guardrails.
 
 In the guardrails config for factcheck you can toggle "verify_response" flag
@@ -591,11 +591,11 @@ AutoAlign fact checking whenever possible.
 
 Following is the format of the colang file, which is present in the library:
 ```colang
-define subflow autoalign factcheck output
+define subflow autoalign groundedness output
   if $check_facts == True
     $check_facts = False
     $threshold = 0.5
-    $output_result = execute autoalign_factcheck_output_api(factcheck_threshold=$threshold)
+    $output_result = execute autoalign_groundedness_output_api(factcheck_threshold=$threshold)
 ```
 
 The `threshold` can be changed depending upon the use-case, the `output_result`
@@ -627,6 +627,6 @@ for ideal chit-chat.
 
 
 
-The output of the factcheck endpoint provides you with a factcheck score against which we can add a threshold which determines whether the given output is factually correct or not.
+The output of the groundness check endpoint provides you with a factcheck score against which we can add a threshold which determines whether the given output is factually correct or not.
 
 The supporting documents or the evidence has to be placed within a `kb` folder within `config` folder.

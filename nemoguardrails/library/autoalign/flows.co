@@ -17,11 +17,11 @@ define subflow autoalign check output
     if $output_result["pii"]["guarded"]
       $bot_message = $pii_message_output
 
-define subflow autoalign factcheck output
+define subflow autoalign groundedness output
   if $check_facts == True
     $check_facts = False
     $threshold = 0.5
-    $output_result = execute autoalign_factcheck_output_api(factcheck_threshold=$threshold, show_autoalign_message=True)
+    $output_result = execute autoalign_groundedness_output_api(factcheck_threshold=$threshold, show_autoalign_message=True)
     bot provide response
 
 define bot refuse to respond

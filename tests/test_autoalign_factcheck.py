@@ -65,7 +65,7 @@ async def test_fact_checking_correct(httpx_mock):
         ],
     )
 
-    async def mock_autoalign_factcheck_output_api(
+    async def mock_autoalign_groundedness_output_api(
         context: Optional[dict] = None, **kwargs
     ):
         query = context.get("bot_message")
@@ -86,7 +86,7 @@ async def test_fact_checking_correct(httpx_mock):
     chat.app.register_action(retrieve_relevant_chunks, "retrieve_relevant_chunks")
 
     chat.app.register_action(
-        mock_autoalign_factcheck_output_api, "autoalign_factcheck_output_api"
+        mock_autoalign_groundedness_output_api, "autoalign_groundedness_output_api"
     )
 
     (
@@ -122,7 +122,7 @@ async def test_fact_checking_wrong(httpx_mock):
         ],
     )
 
-    async def mock_autoalign_factcheck_output_api(
+    async def mock_autoalign_groundedness_output_api(
         context: Optional[dict] = None, **kwargs
     ):
         query = context.get("bot_message")
@@ -141,7 +141,7 @@ async def test_fact_checking_wrong(httpx_mock):
     chat.app.register_action(retrieve_relevant_chunks, "retrieve_relevant_chunks")
 
     chat.app.register_action(
-        mock_autoalign_factcheck_output_api, "autoalign_factcheck_output_api"
+        mock_autoalign_groundedness_output_api, "autoalign_groundedness_output_api"
     )
     (
         chat

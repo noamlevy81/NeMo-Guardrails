@@ -28,10 +28,10 @@ from nemoguardrails.llm.taskmanager import LLMTaskManager
 log = logging.getLogger(__name__)
 
 GUARDRAIL_RESPONSE_TEXT = {
-    "confidential_detection": "Confidential Information violation",
+    "confidential_info_detection": "Confidential Information violation",
     "gender_bias_detection": "Stereotypical bias",
     "harm_detection": "Potential harm to human",
-    "text_toxicity_extraction": "Toxicity in text",
+    "toxicity_detection": "Toxicity in text",
     "tonal_detection": "Negative tone",
     "racial_bias_detection": "Stereotypical bias",
     "jailbreak_detection": "Jailbreak attempt",
@@ -67,17 +67,17 @@ DEFAULT_CONFIG = {
             "[RELIGION]",
         ],
     },
-    "confidential_detection": {"mode": "OFF"},
+    "confidential_info_detection": {"mode": "OFF"},
     "gender_bias_detection": {"mode": "OFF"},
     "harm_detection": {"mode": "OFF"},
-    "text_toxicity_extraction": {"mode": "OFF"},
+    "toxicity_detection": {"mode": "OFF"},
     "racial_bias_detection": {"mode": "OFF"},
     "tonal_detection": {"mode": "OFF"},
     "jailbreak_detection": {"mode": "OFF"},
     "intellectual_property": {"mode": "OFF"},
 }
 
-default_factcheck_config = {"factcheck": {"verify_response": False}}
+default_groundedness_config = {"groundedness_checker": {"verify_response": False}}
 
 
 def process_autoalign_output(responses: List[Any], show_toxic_phrases: bool = False):
@@ -91,7 +91,7 @@ def process_autoalign_output(responses: List[Any], show_toxic_phrases: bool = Fa
     suffix = ""
     for response in responses:
         if response["guarded"]:
-            if response["task"] == "text_toxicity_extraction":
+            if response["task"] == "toxicity_detection":
                 response_dict["guardrails_triggered"] = True
                 prefixes.add(GUARDRAIL_RESPONSE_TEXT[response["task"]])
                 suffix = " Toxic phrases: " + ", ".join(response["output_data"])
@@ -119,8 +119,8 @@ def process_autoalign_output(responses: List[Any], show_toxic_phrases: bool = Fa
     if len(prefixes) > 0:
         response_dict["combined_response"] = ", ".join(prefixes) + " detected."
         if (
-            "text_toxicity_extraction" in response_dict.keys()
-            and response_dict["text_toxicity_extraction"]["guarded"]
+            "toxicity_detection" in response_dict.keys()
+            and response_dict["toxicity_detection"]["guarded"]
             and show_toxic_phrases
         ):
             response_dict["combined_response"] += suffix
@@ -172,21 +172,21 @@ async def autoalign_infer(
     return processed_response
 
 
-async def autoalign_factcheck_infer(
+async def autoalign_groundedness_infer(
     request_url: str,
     text: str,
     documents: List[str],
     guardrails_config: Optional[Dict[Any, Any]] = None,
 ):
-    """Checks the facts for the text using the given documents and provides a fact-checking score"""
-    factcheck_config = default_factcheck_config.copy()
+    """Checks the groundedness for the text using the given documents and provides a fact-checking score"""
+    groundness_config = default_groundedness_config.copy()
     api_key = os.environ.get("AUTOALIGN_API_KEY")
     if api_key is None:
         raise ValueError("AUTOALIGN_API_KEY environment variable not set.")
     headers = {"x-api-key": api_key}
     if guardrails_config:
-        factcheck_config.update(guardrails_config)
-    request_body = {"prompt": text, "documents": documents, "config": factcheck_config}
+        groundness_config.update(guardrails_config)
+    request_body = {"prompt": text, "documents": documents, "config": groundness_config}
     async with aiohttp.ClientSession() as session:
         async with session.post(
             url=request_url,
@@ -269,35 +269,37 @@ async def autoalign_output_api(
     return autoalign_response
 
 
-@action(name="autoalign_factcheck_output_api")
-async def autoalign_factcheck_output_api(
+@action(name="autoalign_groundedness_output_api")
+async def autoalign_groundedness_output_api(
     llm_task_manager: LLMTaskManager,
     context: Optional[dict] = None,
     factcheck_threshold: float = 0.0,
     show_autoalign_message: bool = True,
 ):
-    """Calls AutoAlign factcheck API and checks whether the bot message is factually correct according to given
+    """Calls AutoAlign groundedness check API and checks whether the bot message is factually grounded according to given
     documents"""
 
     bot_message = context.get("bot_message")
     documents = context.get("relevant_chunks_sep", [])
 
     autoalign_config = llm_task_manager.config.rails.config.autoalign
-    autoalign_fact_check_api_url = autoalign_config.parameters.get(
-        "fact_check_endpoint"
+    autoalign_groundedness_api_url = autoalign_config.parameters.get(
+        "groundedness_check_endpoint"
     )
     guardrails_config = getattr(autoalign_config.output, "guardrails_config", None)
-    if not autoalign_fact_check_api_url:
-        raise ValueError("Provide the autoalign factcheck endpoint in the config")
+    if not autoalign_groundedness_api_url:
+        raise ValueError(
+            "Provide the autoalign groundedness check endpoint in the config"
+        )
     text = bot_message
-    score = await autoalign_factcheck_infer(
-        request_url=autoalign_fact_check_api_url,
+    score = await autoalign_groundedness_infer(
+        request_url=autoalign_groundedness_api_url,
         text=text,
         documents=documents,
         guardrails_config=guardrails_config,
     )
     if score < factcheck_threshold and show_autoalign_message:
         log.warning(
-            f"Factcheck violation in llm response has been detected by AutoAlign with fact check score {score}"
+            f"Groundedness violation in llm response has been detected by AutoAlign with fact check score {score}"
         )
     return score

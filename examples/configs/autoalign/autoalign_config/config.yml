@@ -32,7 +32,7 @@ rails:
                         },
                         "gender_bias_detection": {},
                         "harm_detection": {},
-                        "text_toxicity_extraction": {},
+                        "toxicity_detection": {},
                         "racial_bias_detection": {},
                         "jailbreak_detection": {},
                         "intellectual_property": {}
@@ -60,7 +60,7 @@ rails:
                       },
                       "gender_bias_detection": {},
                       "harm_detection": {},
-                      "text_toxicity_extraction": {},
+                      "toxicity_detection": {},
                       "racial_bias_detection": {},
                       "jailbreak_detection": {},
                       "intellectual_property": {}
