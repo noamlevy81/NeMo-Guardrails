@@ -200,7 +200,41 @@ async def autoalign_groundedness_infer(
                 )
             async for line in response.content:
                 resp = json.loads(line)
-                if resp["task"] == "factcheck":
+                if resp["task"] == "groundedness_checker":
+                    if resp["response"].startswith("Factcheck Score: "):
+                        return float(resp["response"][17:])
+    return 1.0
+
+
+async def autoalign_factcheck_infer(
+    request_url: str,
+    user_message: str,
+    bot_message: str,
+    guardrails_config: Optional[Dict[str, Any]] = None,
+):
+    api_key = os.environ.get("AUTOALIGN_API_KEY")
+    if api_key is None:
+        raise ValueError("AUTOALIGN_API_KEY environment variable not set.")
+    headers = {"x-api-key": api_key}
+    request_body = {
+        "prompt": bot_message,
+        "user_query": user_message,
+        "config": guardrails_config,
+    }
+    async with aiohttp.ClientSession() as session:
+        async with session.post(
+            url=request_url,
+            headers=headers,
+            json=request_body,
+        ) as response:
+            if response.status != 200:
+                raise ValueError(
+                    f"AutoAlign call failed with status code {response.status}.\n"
+                    f"Details: {await response.text()}"
+                )
+            async for line in response.content:
+                resp = json.loads(line)
+                if resp["task"] == "fact_checker":
                     if resp["response"].startswith("Factcheck Score: "):
                         return float(resp["response"][17:])
     return 1.0
@@ -301,5 +335,36 @@ async def autoalign_groundedness_output_api(
     if score < factcheck_threshold and show_autoalign_message:
         log.warning(
             f"Groundedness violation in llm response has been detected by AutoAlign with fact check score {score}"
+        )
+    return score
+
+
+@action(name="autoalign_factcheck_output_api")
+async def autoalign_factcheck_output_api(
+    llm_task_manager: LLMTaskManager,
+    context: Optional[dict] = None,
+    factcheck_threshold: float = 0.0,
+    show_autoalign_message: bool = True,
+):
+    """Calls Autoalign Factchecker API and checks if the user message is factually answered by the bot message"""
+
+    user_message = context.get("user_message")
+    bot_message = context.get("bot_message")
+    autoalign_config = llm_task_manager.config.rails.config.autoalign
+    autoalign_factcheck_api_url = autoalign_config.parameters.get("fact_check_endpoint")
+
+    guardrails_config = getattr(autoalign_config.output, "guardrails_config", None)
+    if not autoalign_factcheck_api_url:
+        raise ValueError("Provide the autoalign fact check endpoint in the config")
+    score = await autoalign_factcheck_infer(
+        request_url=autoalign_factcheck_api_url,
+        user_message=user_message,
+        bot_message=bot_message,
+        guardrails_config=guardrails_config,
+    )
+
+    if score < factcheck_threshold and show_autoalign_message:
+        log.warning(
+            f"Factcheck violation in llm response has been detected by AutoAlign with fact check score {score}"
         )
     return score
