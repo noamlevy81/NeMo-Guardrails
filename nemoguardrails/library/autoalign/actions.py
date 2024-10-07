@@ -132,6 +132,7 @@ async def autoalign_infer(
     text: str,
     task_config: Optional[Dict[Any, Any]] = None,
     show_toxic_phrases: bool = False,
+    multi_language: bool = False,
 ):
     """Checks whether the given text passes through the applied guardrails."""
     api_key = os.environ.get("AUTOALIGN_API_KEY")
@@ -146,7 +147,7 @@ async def autoalign_infer(
             config[task]["mode"] = "DETECT"
         if task_config[task]:
             config[task].update(task_config[task])
-    request_body = {"prompt": text, "config": config}
+    request_body = {"prompt": text, "config": config, "multi_language": multi_language}
 
     guardrails_configured = []
 
@@ -211,6 +212,7 @@ async def autoalign_factcheck_infer(
     user_message: str,
     bot_message: str,
     guardrails_config: Optional[Dict[str, Any]] = None,
+    multi_language: bool = False,
 ):
     api_key = os.environ.get("AUTOALIGN_API_KEY")
     if api_key is None:
@@ -220,6 +222,7 @@ async def autoalign_factcheck_infer(
         "prompt": bot_message,
         "user_query": user_message,
         "config": guardrails_config,
+        "multi_language": multi_language,
     }
     async with aiohttp.ClientSession() as session:
         async with session.post(
@@ -251,6 +254,7 @@ async def autoalign_input_api(
     user_message = context.get("user_message")
     autoalign_config = llm_task_manager.config.rails.config.autoalign
     autoalign_api_url = autoalign_config.parameters.get("endpoint")
+    multi_language = autoalign_config.parameters.get("multi_language", False)
     if not autoalign_api_url:
         raise ValueError("Provide the autoalign endpoint in the config")
     task_config = getattr(autoalign_config.input, "guardrails_config")
@@ -259,7 +263,11 @@ async def autoalign_input_api(
     text = user_message
 
     autoalign_response = await autoalign_infer(
-        autoalign_api_url, text, task_config, show_toxic_phrases
+        autoalign_api_url,
+        text,
+        task_config,
+        show_toxic_phrases,
+        multi_language=multi_language,
     )
     if autoalign_response["guardrails_triggered"] and show_autoalign_message:
         log.warning(
@@ -285,6 +293,7 @@ async def autoalign_output_api(
     bot_message = context.get("bot_message")
     autoalign_config = llm_task_manager.config.rails.config.autoalign
     autoalign_api_url = autoalign_config.parameters.get("endpoint")
+    multi_language = autoalign_config.parameters.get("multi_language", False)
     if not autoalign_api_url:
         raise ValueError("Provide the autoalign endpoint in the config")
     task_config = getattr(autoalign_config.output, "guardrails_config")
@@ -293,7 +302,11 @@ async def autoalign_output_api(
 
     text = bot_message
     autoalign_response = await autoalign_infer(
-        autoalign_api_url, text, task_config, show_toxic_phrases
+        autoalign_api_url,
+        text,
+        task_config,
+        show_toxic_phrases,
+        multi_language=multi_language,
     )
     if autoalign_response["guardrails_triggered"] and show_autoalign_message:
         log.warning(
@@ -352,6 +365,7 @@ async def autoalign_factcheck_output_api(
     bot_message = context.get("bot_message")
     autoalign_config = llm_task_manager.config.rails.config.autoalign
     autoalign_factcheck_api_url = autoalign_config.parameters.get("fact_check_endpoint")
+    multi_language = autoalign_config.parameters.get("multi_language", False)
 
     guardrails_config = getattr(autoalign_config.output, "guardrails_config", None)
     if not autoalign_factcheck_api_url:
@@ -361,6 +375,7 @@ async def autoalign_factcheck_output_api(
         user_message=user_message,
         bot_message=bot_message,
         guardrails_config=guardrails_config,
+        multi_language=multi_language,
     )
 
     if score < factcheck_threshold and show_autoalign_message:

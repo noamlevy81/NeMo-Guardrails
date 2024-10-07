@@ -9,6 +9,7 @@ rails:
         autoalign:
             parameters:
                 endpoint: "https://<AUTOALIGN_ENDPOINT>/guardrail"
+                multi_language: False
             input:
                 guardrails_config:
                     {

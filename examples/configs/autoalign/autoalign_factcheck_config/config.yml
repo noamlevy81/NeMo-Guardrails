@@ -6,14 +6,33 @@ rails:
     config:
         autoalign:
             parameters:
-                groundedness_check_endpoint: "https://<AUTOALIGN_ENDPOINT>/groundedness_check"
+                fact_check_endpoint: "https://<AUTOALIGN_ENDPOINT>/guardrail"
+                multi_language: False
             output:
                 guardrails_config:
                   {
-                      "groundedness_checker": {
-                          "verify_response": false
+                      "fact_checker": {
+                        "knowledge_base": {
+                            "num_urls": 5,
+                            "web_content": true,
+                            "max_tokens_per_chunk": 500,
+                            "add_block_domains": [
+                                "facebook.com"
+                            ],
+                            "search_engine": "Google",
+                            "static_knowledge": false
+                        },
+                        "content_processor": {
+                            "max_chunks_per_source": 15,
+                            "use_all_chunks": false,
+                            "filter_method": {
+                                "name": "Match Threshold",
+                                "threshold": 0.5
+                            }
+                        },
+                        "mitigation_with_evidence": false
                       },
                   }
     output:
         flows:
-            - autoalign groundedness output
+            - autoalign factcheck output

@@ -41,6 +41,7 @@ rails:
         autoalign:
             parameters:
                 endpoint: "https://<AUTOALIGN_ENDPOINT>/guardrail"
+                multi_language: False
             input:
                 guardrails_config:
                     {
@@ -267,6 +268,8 @@ rails:
             - autoalign check output
 ```
 We also have to add the AutoAlign's guardrail endpoint in parameters.
+
+"multi_language" is an optional parameter to enable guardrails for non-English information
 
 One of the advanced configs is matching score (ranging from 0 to 1) which is a threshold that determines whether the guardrail will block the input/output or not.
 If the matching score is higher (i.e. close to 1) then the guardrail will be more strict.
