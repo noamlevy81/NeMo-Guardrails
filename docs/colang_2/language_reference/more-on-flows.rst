@@ -12,11 +12,13 @@ More on Flows
 
 In section :ref:`Defining Flows<defining-flows>` we learned the core mechanisms of flows. In this section will look at more advanced topics that are related to flows.
 
+.. _more-on-flows-activate-a-flow:
+
 ----------------------------------------
 Activate a Flow
 ----------------------------------------
 
-We already have seen the ``start`` and ``await`` keywords to trigger a flow. We are now introducing the third keyword ``activate`` that can start a flow. The difference to ``start`` lies in the behavior of the flow when it has finished or failed. If a flow was activated it will always automatically restart a new instance of the flow as soon as it has ended.
+We already have seen the ``start`` and ``await`` keywords to trigger a flow. We are now introducing the third keyword ``activate`` that can start a flow. The difference to ``start`` lies in the behavior of the flow when it has finished or failed. If a flow was activated it will always automatically restart a new instance of the flow as soon as it has ended. Furthermore, a specific flow configuration (with identical flow parameters) can only be activated once and will not start new instances, even if activated multiple times.
 
 .. important::
     Flow activation statement syntax definition:
@@ -25,8 +27,8 @@ We already have seen the ``start`` and ``await`` keywords to trigger a flow. We 
 
         activate <Flow> [and <Flow>]…
 
-    - Currently, reference assignments for activated flows is not supported since the instance will change after a restart
-    - Only flow and-groups are supported
+    - Reference assignments for activated flows is not supported since the instance will change after a restart
+    - Only and-groups are supported and not or-groups
 
     Examples:
 
@@ -34,6 +36,10 @@ We already have seen the ``start`` and ``await`` keywords to trigger a flow. We 
 
         # Activate a single flow
         activate handling user presents
+
+        # Activate two different instances of the same flow with parameters
+        activate handling user said "Hi"
+        activate handling user said "Bye"
 
         # Activate a group of flows
         activate handling user presents and handling question repetition 5.0
@@ -82,10 +88,10 @@ Running this example you will see the bot responding with "Hello again" as long 
 
 In contrast, you can only say "Bye" once before you restart the story.
 
-Activating a flow enables you to keep matching the interaction event sequence against the pattern defined in the flow, even if the pattern previously successfully matched the interaction event sequence or failed. This is often used for passively observing a pattern to update a state or to trigger actions that don't compete with the main interaction pattern.
+Activating a flow enables you to keep matching the interaction event sequence against the pattern defined in the flow, even if the pattern previously successfully matched the interaction event sequence (finished) or failed. Since the same flow configuration can only be activated once, you can use the flow activation directly wherever you require the flow's functionality. This on demand pattern is better than activating it once in the beginning before you actually know if it is needed.
 
 .. important::
-    Activating a flow will start a flow and automatically restart it when it has ended to match to reoccurring interaction patterns.
+    Activating a flow will start a flow and automatically restart it when it has ended (finished or failed) to match to reoccurring interaction patterns.
 
 .. important::
     The main flow behaves also like an activated flow. As soon as it reaches the end it will restart automatically.
@@ -119,6 +125,8 @@ See, how the main flow does not require any match statement at the end and will 
 
 .. important::
     An activated flow that immediately finished (does not wait for any event) will only be run once and will stay activated.
+
+.. _more-on-flows-start-a-new-flow-instance:
 
 ----------------------------------------
 Start a new Flow Instance
@@ -206,6 +214,39 @@ Since the first instance already started a new instance (second one) it will not
 .. note::
     You can think of the ``start_new_flow_instance`` label being at the end of each activated flow. Defining it in a different position will move it up from the default position at the end.
 
+.. _more-on-flows-deactivate-a-flow:
+
+----------------------------------------
+Deactivate a Flow
+----------------------------------------
+
+An activated flow will usually stay alive since it always restarts when it finishes or fails. To deactivate an activated flow you can use the `deactivate` keyword:
+
+.. important::
+    Flow deactivation statement syntax definition:
+
+    .. code-block:: text
+
+        deactivate <Flow>
+
+    Examples:
+
+    .. code-block:: colang
+
+        # Deactivate a single flow
+        deactivate handling user presents
+
+        # Deactivate two different instances of the same flow with different parameters
+        deactivate handling user said "Hi"
+        deactivate handling user said "Bye"
+
+Under the hood the `deactivate` keyword will abort the flow and disable the restart. It is a shortcut for this statement:
+
+.. code-block:: colang
+
+    send StopFlow(flow_id="flow name", deactivate=True)
+
+
 .. _more-on-flows-override-flows:
 
 ---------------
@@ -256,12 +297,12 @@ So far, any concurrently progressing flows that resulted in different event gene
 
     .. code-block:: colang
 
-        @loop("<loop_name>")
+        @loop([id=]"<loop_name>"[,[priority=]<integer_number>])
         flow <name of flow> ...
 
     Hint: To generate a new loop name for each flow call use the loop name "NEW"
 
-By default, any flow without an explicit interaction loop inherits the interaction loop of its parent flow. Let's see now an example of a second interaction loop to design flows that augment the main interaction rather than compete with it:
+By default, any flow without an explicit interaction loop inherits the interaction loop of its parent flow and has priority level 0. Let's see now an example of a second interaction loop to design flows that augment the main interaction rather than compete with it:
 
 .. code-block:: colang
     :caption: more_on_flows/interaction_loops/main.co
@@ -314,6 +355,8 @@ The example implements two bot reaction flows that listen to the user saying "Hi
     Gesture: frown
 
     Goodbye
+
+By default, parallel flows in different interaction loops advance in order of their start or activation. This might be an important detail if e.g a global variable is set in one flow and read in another. If the order is wrong, the global variable will not be set yet when read by the other flow. In order to enforce the processing order independent of the start or activation order, you can define the interaction loop priority level using an integer. By default, any interaction loop has priority 0. A higher number defines a higher priority, and lower (negative) number a lower processing priority.
 
 
 .. _more-on-flows-flow-conflict-resolution-prioritization:

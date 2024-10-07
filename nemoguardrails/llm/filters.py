@@ -61,8 +61,9 @@ def co_v2(
         "wolframalpha_query",
         "zapier_nla_query",
         "call activefence api",
+        "call gcpnlp api",
         "jailbreak_detection_heuristics",
-        "check_hallucination",
+        "self_check_hallucination",
         "llama_guard_check_input",
         "llama_guard_check_output",
         "alignscore_check_facts",
@@ -167,6 +168,43 @@ def to_messages(colang_history: str) -> List[dict]:
     # Check if there is a last message from the bot.
     if bot_lines:
         messages.append({"type": "bot", "content": "\n".join(bot_lines)})
+
+    return messages
+
+
+def to_messages_v2(colang_history: str) -> List[dict]:
+    """Filter that given a history in colang 2.0 format, returns all messages."""
+    messages = []
+
+    # For now, we use a simple heuristic. The line `user "xxx"` gets translated to
+    # a message from the user, and the rest gets translated to messages from the assistant.
+    lines = colang_history.split("\n")
+
+    user_lines = []
+    bot_lines = []
+    for line in lines:
+        if line.startswith("user action:"):
+            if len(bot_lines) > 0:
+                messages.append({"type": "assistant", "content": "\n".join(bot_lines)})
+                bot_lines = []
+            user_lines.append(line)
+        elif line.startswith("user intent:") or line.startswith("bot"):
+            if len(user_lines) > 0:
+                messages.append({"type": "user", "content": "\n".join(user_lines)})
+                user_lines = []
+            bot_lines.append(line)
+        elif line.strip() != "":
+            if len(user_lines) > 0:
+                user_lines.append(line)
+            elif len(bot_lines) > 0:
+                bot_lines.append(line)
+
+    if len(user_lines) > 0:
+        messages.append({"type": "user", "content": "\n".join(user_lines)})
+        user_lines = []
+    elif len(bot_lines) > 0:
+        messages.append({"type": "assistant", "content": "\n".join(bot_lines)})
+        bot_lines = []
 
     return messages
 

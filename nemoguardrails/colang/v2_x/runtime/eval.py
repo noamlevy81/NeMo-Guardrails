@@ -30,7 +30,7 @@ from nemoguardrails.colang.v2_x.runtime.utils import (
     AttributeDict,
     escape_special_string_characters,
 )
-from nemoguardrails.eval.cli.simplify_formatter import SimplifyFormatter
+from nemoguardrails.logging.simplify_formatter import SimplifyFormatter
 from nemoguardrails.utils import new_uuid
 
 log = logging.getLogger(__name__)
@@ -162,6 +162,7 @@ def eval_expression(expr: str, context: dict) -> Any:
                 "is_bool": _is_bool,
                 "is_str": _is_str,
                 "is_regex": _is_regex,
+                "type": _get_type,
                 "less_than": _less_than_operator,
                 "equal_less_than": _equal_or_less_than_operator,
                 "greater_than": _greater_than_operator,
@@ -170,8 +171,10 @@ def eval_expression(expr: str, context: dict) -> Any:
                 "list": list,
             }
         )
-        if "_state" in context:
-            functions.update({"flows_info": partial(_flows_info, context["_state"])})
+        if "system" in context and "state" in context["system"]:
+            functions.update(
+                {"flows_info": partial(_flows_info, context["system"]["state"])}
+            )
 
         # TODO: replace this with something even more restrictive.
         s = EvalWithCompoundTypes(
@@ -251,6 +254,11 @@ def _is_str(val: Any) -> bool:
 def _is_regex(val: Any) -> bool:
     """Check if it is an integer."""
     return isinstance(val, re.Pattern)
+
+
+def _get_type(val: Any) -> str:
+    """ "Return type of variable as a string."""
+    return type(val).__name__
 
 
 def _less_than_operator(v_ref: Any) -> ComparisonExpression:

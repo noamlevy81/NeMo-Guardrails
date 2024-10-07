@@ -229,11 +229,11 @@ Currently, the guardrails library includes:
 - [Hallucination Detection](https://docs.nvidia.com/nemo/guardrails/user_guides/guardrails-library.html#hallucination-detection)
 - [AlignScore-based Fact-checking](https://docs.nvidia.com/nemo/guardrails/user_guides/guardrails-library.html#alignscore-based-fact-checking)
 - [LlamaGuard-based Content Moderation](https://docs.nvidia.com/nemo/guardrails/user_guides/guardrails-library.html#llama-guard-based-content-moderation)
-- [RAG hallucination detection using Patronus Lynx](https://docs.nvidia.com/nemo/guardrails/user_guides/guardrails-library.md#patronus-lynx-based-rag-hallucination-detection)
+- [RAG hallucination detection using Patronus Lynx](https://docs.nvidia.com/nemo/guardrails/user_guides/guardrails-library.html#patronus-lynx-based-rag-hallucination-detection)
 - [Presidio-based Sensitive Data Detection](https://docs.nvidia.com/nemo/guardrails/user_guides/guardrails-library.html#presidio-based-sensitive-data-detection)
 - [Input moderation using ActiveFence](https://docs.nvidia.com/nemo/guardrails/user_guides/guardrails-library.html#activefence)
-- [RAG Hallucination detection using Got It AI's TruthChecker API](https://docs.nvidia.com/nemo/guardrails/user_guides/guardrails-library.md#got-it-ai)
-- [AutoAlign-based guardrails](https://docs.nvidia.com/nemo/guardrails/user_guides/guardrails-library.md#autoalign)
+- [RAG Hallucination detection using Got It AI's TruthChecker API](https://docs.nvidia.com/nemo/guardrails/user_guides/guardrails-library.html#got-it-ai)
+- [AutoAlign-based guardrails](https://docs.nvidia.com/nemo/guardrails/user_guides/guardrails-library.html#autoalign)
 
 ## CLI
 
@@ -289,7 +289,7 @@ NeMo Guardrails integrates seamlessly with LangChain. You can easily wrap a guar
 
 Evaluating the safety of a LLM-based conversational application is a complex task and still an open research question. To support proper evaluation, NeMo Guardrails provides the following:
 
-1. An [evaluation tool](./nemoguardrails/eval/README.md), i.e. `nemoguardrails evaluate`, with support for topical rails, fact-checking, moderation (jailbreak and output moderation) and hallucination.
+1. An [evaluation tool](nemoguardrails/evaluate/README.md), i.e. `nemoguardrails evaluate`, with support for topical rails, fact-checking, moderation (jailbreak and output moderation) and hallucination.
 2. An experimental [red-teaming interface](https://docs.nvidia.com/nemo/guardrails/security/red-teaming.html).
 3. Sample LLM Vulnerability Scanning Reports, e.g, [ABC Bot - LLM Vulnerability Scan Results](https://docs.nvidia.com/nemo/guardrails/evaluation/llm-vulnerability-scanning.html)
 

@@ -35,6 +35,7 @@ class Task(Enum):
     GENERATE_FLOW_FROM_INSTRUCTIONS = "generate_flow_from_instructions"
     GENERATE_FLOW_FROM_NAME = "generate_flow_from_name"
     GENERATE_FLOW_CONTINUATION = "generate_flow_continuation"
+    GENERATE_FLOW_CONTINUATION_FROM_NLD = "generate_flow_continuation_from_flow_nld"
 
     # Tasks for various rails
     SELF_CHECK_INPUT = "self_check_input"
@@ -46,4 +47,4 @@ class Task(Enum):
     )
 
     SELF_CHECK_FACTS = "fact_checking"
-    CHECK_HALLUCINATION = "check_hallucination"
+    SELF_CHECK_HALLUCINATION = "self_check_hallucination"

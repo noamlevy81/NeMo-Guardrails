@@ -110,12 +110,6 @@ prompts:
           ${{ var_name }} =
       output_parser: "verbose_v1"
 
-    - task: fact_checking
-      content: |-
-          You are given a task to identify if the hypothesis is grounded and entailed to the evidence.
-          You will only use the contents of the evidence and not rely on external knowledge.
-          Answer with yes/no. "evidence": {{ evidence }} "hypothesis": {{ response }} "entails":
-
     # Colang 2.x prompts below.
 
     # Prompt for detecting the user message canonical form.
@@ -151,6 +145,13 @@ prompts:
 
           # These are the most likely user intents:
           {{ examples }}
+
+          {% if context.relevant_chunks %}
+          # This is some additional context:
+          ```markdown
+          {{ context.relevant_chunks }}
+          ```
+          {% endif %}
 
           # This is the current conversation between the user and the bot:
           {{ history | colang }}
@@ -188,6 +189,8 @@ prompts:
           # Complete the following flow based on its instruction:
           flow {{ flow_name }}
             """{{ instructions }}"""
+      stop:
+          - "\nflow"
 
     # Prompt for generating a flow from name.
     - task: generate_flow_from_name
@@ -211,4 +214,16 @@ prompts:
           # This is the current conversation between the user and the bot:
           {{ history | colang }}
 
+          {% if context.relevant_chunks %}
+          # This is some additional context:
+          ```markdown
+          {{ context.relevant_chunks }}
+          ```
+          {% endif %}
+
+
           bot intent:
+
+    - task: generate_flow_continuation_from_flow_nld
+      content: |-
+          {{ flow_nld }}
