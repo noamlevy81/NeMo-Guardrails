@@ -22,6 +22,7 @@ Additional providers can be registered using the `register_llm_provider` functio
 """
 
 import asyncio
+import contextvars
 import logging
 import warnings
 from importlib.metadata import version
@@ -137,7 +138,9 @@ class HuggingFacePipelineCompatible(HuggingFacePipeline):
                 run_manager=run_manager,
                 **kwargs,
             )
-            loop.create_task(self._agenerate(**generation_kwargs))
+            current_context = contextvars.copy_context()
+            loop.create_task(current_context.run(self._agenerate(**generation_kwargs)))
+            # loop.create_task(self._agenerate(**generation_kwargs))
 
             # And start waiting for the chunks to come in.
             completion = ""

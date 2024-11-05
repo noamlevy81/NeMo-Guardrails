@@ -65,7 +65,12 @@ from nemoguardrails.rails.llm.options import (
 )
 from nemoguardrails.rails.llm.utils import get_history_cache_key
 from nemoguardrails.streaming import StreamingHandler
-from nemoguardrails.utils import get_or_create_event_loop, new_event_dict, new_uuid
+from nemoguardrails.utils import (
+    create_task_with_context,
+    get_or_create_event_loop,
+    new_event_dict,
+    new_uuid,
+)
 
 log = logging.getLogger(__name__)
 
@@ -927,7 +932,7 @@ class LLMRails:
         """Simplified interface for getting directly the streamed tokens from the LLM."""
         streaming_handler = StreamingHandler()
 
-        asyncio.create_task(
+        create_task_with_context(
             self.generate_async(
                 prompt=prompt,
                 messages=messages,

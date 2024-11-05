@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import asyncio
+import contextvars
 import dataclasses
 import fnmatch
 import importlib.resources as pkg_resources
@@ -253,6 +254,12 @@ def get_or_create_event_loop():
         asyncio.set_event_loop(loop)
 
     return loop
+
+
+# Wrapper function to create tasks with context propagation
+def create_task_with_context(coro):
+    current_context = contextvars.copy_context()
+    return asyncio.create_task(current_context.run(coro))
 
 
 def get_data_path(package_name: str, file_path: str) -> str:

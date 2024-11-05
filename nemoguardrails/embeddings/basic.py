@@ -14,6 +14,7 @@
 # limitations under the License.
 
 import asyncio
+import contextvars
 import logging
 from typing import Any, Dict, List, Optional, Union
 
@@ -23,6 +24,7 @@ from nemoguardrails.embeddings.cache import cache_embeddings
 from nemoguardrails.embeddings.index import EmbeddingsIndex, IndexItem
 from nemoguardrails.embeddings.providers import EmbeddingModel, init_embedding_model
 from nemoguardrails.rails.llm.config import EmbeddingsCacheConfig
+from nemoguardrails.utils import create_task_with_context
 
 log = logging.getLogger(__name__)
 
@@ -196,8 +198,8 @@ class BasicEmbeddingsIndex(EmbeddingsIndex):
         # Wait up to `max_batch_hold` time or until `max_batch_size` is reached.
         done, pending = await asyncio.wait(
             [
-                asyncio.create_task(asyncio.sleep(self.max_batch_hold)),
-                asyncio.create_task(self._current_batch_full_event.wait()),
+                create_task_with_context(asyncio.sleep(self.max_batch_hold)),
+                create_task_with_context(self._current_batch_full_event.wait()),
             ],
             return_when=asyncio.FIRST_COMPLETED,
         )
@@ -243,7 +245,9 @@ class BasicEmbeddingsIndex(EmbeddingsIndex):
             self._current_batch_finished_event = asyncio.Event()
             self._current_batch_full_event = asyncio.Event()
             self._current_batch_submitted.clear()
-            asyncio.ensure_future(self._run_batch())
+            current_context = contextvars.copy_context()
+
+            asyncio.ensure_future(current_context.run(self._run_batch()))
 
         # We check if we reached the max batch size
         if len(self._req_queue) >= self.max_batch_size:
