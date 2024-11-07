@@ -99,7 +99,8 @@ async def detect_sensitive_data(source: str, text: str, config: RailsConfig):
     """
     # Based on the source of the data, we use the right options
     sdd_config = config.rails.config.sensitive_data_detection
-    assert source in ["input", "output", "retrieval"]
+    if source not in ["input", "output", "retrieval"]:
+        raise ValueError("source must be one of 'input', 'output', or 'retrieval'")
     options: SensitiveDataDetectionOptions = getattr(sdd_config, source)
     score_threshold = getattr(options, "score_threshold", 0.4)
 
