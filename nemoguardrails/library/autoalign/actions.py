@@ -21,8 +21,6 @@ from typing import Any, Dict, List, Optional
 import aiohttp
 
 from nemoguardrails.actions import action
-from nemoguardrails.actions.actions import ActionResult
-from nemoguardrails.kb.kb import KnowledgeBase
 from nemoguardrails.llm.taskmanager import LLMTaskManager
 
 log = logging.getLogger(__name__)
