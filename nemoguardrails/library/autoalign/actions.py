@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import copy
 import json
 import logging
 import os
@@ -138,7 +139,7 @@ async def autoalign_infer(
         raise ValueError("AUTOALIGN_API_KEY environment variable not set.")
 
     headers = {"x-api-key": api_key}
-    config = DEFAULT_CONFIG.copy()
+    config = copy.deepcopy(DEFAULT_CONFIG)
     # enable the select guardrail
     for task in task_config.keys():
         if task != "factcheck":
@@ -178,7 +179,7 @@ async def autoalign_groundedness_infer(
     guardrails_config: Optional[Dict[Any, Any]] = None,
 ):
     """Checks the groundedness for the text using the given documents and provides a fact-checking score"""
-    groundness_config = default_groundedness_config.copy()
+    groundness_config = copy.deepcopy(default_groundedness_config)
     api_key = os.environ.get("AUTOALIGN_API_KEY")
     if api_key is None:
         raise ValueError("AUTOALIGN_API_KEY environment variable not set.")
