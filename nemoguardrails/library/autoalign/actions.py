@@ -218,7 +218,14 @@ async def autoalign_factcheck_infer(
         raise ValueError("AUTOALIGN_API_KEY environment variable not set.")
     headers = {"x-api-key": api_key}
     request_body = {
-        "prompt": bot_message,
+        "labels": {"session_id": "nemo", "api_key": api_key},
+        "content_moderation_docs": [
+            {
+                "content": bot_message,
+                "type": "text_content",
+                "file_name": "HighlightedText.txt",
+            }
+        ],
         "user_query": user_message,
         "config": guardrails_config,
         "multi_language": multi_language,
@@ -234,11 +241,8 @@ async def autoalign_factcheck_infer(
                     f"AutoAlign call failed with status code {response.status}.\n"
                     f"Details: {await response.text()}"
                 )
-            async for line in response.content:
-                resp = json.loads(line)
-                if resp["task"] == "fact_checker":
-                    if resp["response"].startswith("Factcheck Score: "):
-                        return float(resp["response"][17:])
+            factcheck_response = await response.json()
+            return factcheck_response["all_overall_fact_scores"][0]
     return 1.0
 
 
