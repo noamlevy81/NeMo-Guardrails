@@ -579,9 +579,9 @@ rails:
 ```
 
 Specify the groundness endpoint the parameters section of autoalign's config.
-Then, you have to call the corresponding subflows for factcheck guardrails.
+Then, you have to call the corresponding subflows for groundness guardrails.
 
-In the guardrails config for factcheck you can toggle "verify_response" flag
+In the guardrails config for groundness check you can toggle "verify_response" flag
 which will enable(true) / disable (false) additional processing of LLM Response.
 This processing ensures that only relevant LLM responses undergo fact-checking
 and responses like greetings ('Hi', 'Hello' etc.) do not go through fact-checking
@@ -589,7 +589,7 @@ process.
 
 Note that the verify_response is set to False by default as it requires additional
 computation, and we encourage users to determine which LLM responses should go through
-AutoAlign fact checking whenever possible.
+AutoAlign groundness check whenever possible.
 
 
 Following is the format of the colang file, which is present in the library:
@@ -633,3 +633,61 @@ for ideal chit-chat.
 The output of the groundness check endpoint provides you with a factcheck score against which we can add a threshold which determines whether the given output is factually correct or not.
 
 The supporting documents or the evidence has to be placed within a `kb` folder within `config` folder.
+
+
+### Fact Check
+The fact check uses the bot response and user input prompt to check the factual correctness of the bot response based on the user prompt. Unlike groundness check, fact check does not use a pre-existing internal knowledge base.
+To use AutoAlign's fact check module, modify the `config.yml` from example autoalign_factcheck_config.
+
+```yaml
+models:
+  - type: main
+    engine: openai
+    model: gpt-3.5-turbo-instruct
+rails:
+    config:
+        autoalign:
+            parameters:
+                fact_check_endpoint: "https://<AUTOALIGN_ENDPOINT>/content_moderation"
+                multi_language: False
+            output:
+                guardrails_config:
+                    {
+                        "fact_checker": {
+                            "mode": "DETECT",
+                            "knowledge_base": [
+                                {
+                                    "add_block_domains": [],
+                                    "documents": [],
+                                    "knowledgeType": "web",
+                                    "num_urls": 3,
+                                    "search_engine": "Google",
+                                    "static_knowledge_source_type": ""
+                                }
+                            ],
+                            "content_processor": {
+                                "max_tokens_per_chunk": 100,
+                                "max_chunks_per_source": 3,
+                                "use_all_chunks": false,
+                                "name": "Semantic Similarity",
+                                "filter_method": {
+                                    "name": "Match Threshold",
+                                    "threshold": 0.5
+                                },
+                                "content_filtering": true,
+                                "content_filtering_threshold": 0.6,
+                                "factcheck_max_text": false,
+                                "max_input_text": 150
+                            },
+                            "mitigation_with_evidence": false
+                        },
+                    }
+    output:
+        flows:
+            - autoalign factcheck output
+```
+
+Specify the fact_check_endpoint to the correct AutoAlign environment.
+Then set to the corresponding subflows for fact check guardrail.
+
+The output of the fact check endpoint provides you with a fact check score that combines the factual correctness of various statements made by the bot response. Then provided with a user set threshold, will log a warning if the bot response is determined to be factually incorrect

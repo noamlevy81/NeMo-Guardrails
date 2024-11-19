@@ -36,7 +36,8 @@ rails:
                         "toxicity_detection": {},
                         "racial_bias_detection": {},
                         "jailbreak_detection": {},
-                        "intellectual_property": {}
+                        "intellectual_property": {},
+                        "confidential_info_detection": {}
                     }
             output:
                 guardrails_config:
