@@ -92,7 +92,8 @@ def convert_colang_2alpha_syntax(lines: List[str]) -> List[str]:
         # line = re.sub(r'r"(.*)"', r'regex("\1")', line)
         line = re.sub(r'r"(.*)"', r'regex("(\1)")', line)
         line = re.sub(r"r'(.*)'", r"regex('(\1)')", line)
-        line = re.sub(r"\{\{(.*)\}\}", r"{\1}", line)
+        line = re.sub(r'"\{\{(.*)\}\}"', r'"{\1}"', line)
+        line = re.sub(r"'\{\{(.*)\}\}'", r"'{\1}'", line)
         line = re.sub(r"findall", "find_all", line)
 
         # Convert triple quotes to ellipsis followed by double quotes for inline NLDs
