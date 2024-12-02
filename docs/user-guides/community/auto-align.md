@@ -7,7 +7,7 @@ AutoAlign comes with a library of built-in guardrails that you can easily use:
 1. [Gender bias Detection](#gender-bias-detection)
 2. [Harm Detection](#harm-detection)
 3. [Jailbreak Detection](#jailbreak-detection)
-4. [Confidential Detection](#confidential-detection)
+4. [Confidential Info Detection](#confidential-info-detection)
 5. [Intellectual property detection](#intellectual-property-detection)
 6. [Racial bias Detection](#racial-bias-detection)
 7. [Tonal Detection](#tonal-detection)
@@ -385,6 +385,10 @@ For intellectual property detection, the matching score has to be following form
 
 ### Confidential Info detection
 
+```{warning}
+Backward incompatible changes are introduced in v0.12.0 due to AutoAlign API changes
+```
+
 The goal of the confidential info detection rail is to determine if the text has any kind of confidential information. This rail can be applied at both input and output.
 This guardrail can be added by adding `confidential_info_detection` key in the dictionary under `guardrails_config` section
 which is under `input` or `output` section which should be in `autoalign` section in `config.yml`.
@@ -439,6 +443,10 @@ For tonal detection, the matching score has to be following format:
 
 ### Toxicity extraction
 
+```{warning}
+Backward incompatible changes are introduced in v0.12.0 due to AutoAlign API changes
+```
+
 The goal of the toxicity detection rail is to determine if the text has any kind of toxic content. This rail can be applied at both input and output. This guardrail not just detects the toxicity of the text but also extracts toxic phrases from the text.
 This guardrail can be added by adding `toxicity_detection` key in the dictionary under `guardrails_config` section
 which is under `input` or `output` section which should be in `autoalign` section in `config.yml`.
@@ -484,6 +492,10 @@ define bot refuse to respond
 
 
 ### PII
+
+```{warning}
+Backward incompatible changes are introduced in v0.12.0 due to AutoAlign API changes
+```
 
 To use AutoAlign's PII (Personal Identifiable Information) module, you have to list the entities that you wish to redact
 in `enabled_types` in the dictionary of `guardrails_config` under the key of `pii`; if not listed then all PII types will be redacted.
@@ -558,6 +570,11 @@ Example PII config:
 ```
 
 ### Groundness Check
+
+```{warning}
+Backward incompatible changes are introduced in v0.12.0 due to AutoAlign API changes
+```
+
 The groundness check needs an input statement (represented as ‘prompt’) as a list of evidence documents.
 To use AutoAlign's groundness check module, you have to modify the `config.yml` in the following format:
 
@@ -636,6 +653,11 @@ The supporting documents or the evidence has to be placed within a `kb` folder w
 
 
 ### Fact Check
+
+```{warning}
+Backward incompatible changes are introduced in v0.12.0 due to AutoAlign API changes
+```
+
 The fact check uses the bot response and user input prompt to check the factual correctness of the bot response based on the user prompt. Unlike groundness check, fact check does not use a pre-existing internal knowledge base.
 To use AutoAlign's fact check module, modify the `config.yml` from example autoalign_factcheck_config.
 
