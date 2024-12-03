@@ -125,7 +125,7 @@ For additional guidance on handling undetected PII entities and minimizing false
 ## Custom Recognizers
 
 If you have custom entities that you want to detect, you can define custom *recognizers*.
-For more details, check out this [tutorial](https://microsoft.github.io/presidio/tutorial/08_no_code/) and this [example](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/conf/example_recognizers.yaml).
+For more details, check out this [tutorial](https://microsoft.github.io/presidio/tutorial/08_no_code/) and this [example](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/example_recognizers.yaml).
 
 Below is an example of configuring a `TITLE` entity and detecting it inside the input rail.
 
