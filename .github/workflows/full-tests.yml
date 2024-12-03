@@ -5,6 +5,7 @@ on:
     types: [review_requested, ready_for_review]
     paths-ignore:
       - "**/*.md"
+      - ".github/**"
   push:
     tags:
       - "v*"

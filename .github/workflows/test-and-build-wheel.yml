@@ -2,6 +2,7 @@ name: Build and Test Python Wheel
 
 on:
   pull_request:
+    types: [review_requested, ready_for_review]
     paths-ignore:
       - "**/*.md"
   push:
