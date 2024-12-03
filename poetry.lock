@@ -851,19 +851,19 @@ standard = ["email-validator (>=2.0.0)", "fastapi-cli[standard] (>=0.0.5)", "htt
 
 [[package]]
 name = "fastembed"
-version = "0.3.6"
+version = "0.4.0"
 description = "Fast, light, accurate library built for retrieval embedding generation"
 optional = false
 python-versions = "<3.13,>=3.8.0"
 files = [
-    {file = "fastembed-0.3.6-py3-none-any.whl", hash = "sha256:2bf70edae28bb4ccd9e01617098c2075b0ba35b88025a3d22b0e1e85b2c488ce"},
-    {file = "fastembed-0.3.6.tar.gz", hash = "sha256:c93c8ec99b8c008c2d192d6297866b8d70ec7ac8f5696b34eb5ea91f85efd15f"},
+    {file = "fastembed-0.4.0-py3-none-any.whl", hash = "sha256:92dff5f53aef55df40f8c403411e08a9ed66e1c4138773acacc6b945a71973e4"},
+    {file = "fastembed-0.4.0.tar.gz", hash = "sha256:428867d91cd775e939f8650af1fcdc312f66359c5d39a0006b4ef991115905f5"},
 ]
 
 [package.dependencies]
 huggingface-hub = ">=0.20,<1.0"
 loguru = ">=0.7.2,<0.8.0"
-mmh3 = ">=4.0,<5.0"
+mmh3 = ">=4.1.0,<5.0.0"
 numpy = {version = ">=1.21,<2", markers = "python_version < \"3.12\""}
 onnx = ">=1.15.0,<2.0.0"
 onnxruntime = ">=1.17.0,<2.0.0"
