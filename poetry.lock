@@ -5426,5 +5426,5 @@ trace = ["aiofiles", "opentelemetry-api", "opentelemetry-sdk"]
 
 [metadata]
 lock-version = "2.0"
-python-versions = ">=3.9,<3.9.7 || >3.9.7,<3.12"
-content-hash = "9d2dd9d8ddabafde1d666ab60976209a7c9d70d52b9258e419cd72fe9a6aeae5"
+python-versions = ">=3.9,!=3.9.7,<3.12"
+content-hash = "b5f8528b3b41a95e71059cdb2c0bcd4effe605c3a05a84a8dae18a0cd29d3875"
