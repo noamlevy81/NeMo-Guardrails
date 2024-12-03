@@ -683,7 +683,9 @@ def _load_path(
                 _raw_config = {}
 
                 # Extract the full path for the file and compute relative path
-                full_path = os.path.join(root, file)
+                full_path = os.path.normpath(os.path.join(root, file))
+                if not full_path.startswith(os.path.normpath(config_path)):
+                    raise ValueError(f"Access to the specified path is not allowed: {full_path}")
                 rel_path = os.path.relpath(full_path, config_path)
 
                 # If it's a file in the `kb` folder we need to append it to the docs
