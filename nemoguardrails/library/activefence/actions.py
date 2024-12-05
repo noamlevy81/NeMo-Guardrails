@@ -33,9 +33,9 @@ async def call_activefence_api(context: Optional[dict] = None):
         raise ValueError("ACTIVEFENCE_API_KEY environment variable not set.")
 
     if context.get("triggered_input_rail"):
-        text = context.get("user_message")
+        text = context["user_message"]
     else:
-        text = context.get("bot_message")
+        text = context["bot_message"]
 
     url = "https://apis.activefence.com/sync/v3/content/text"
     headers = {"af-api-key": api_key, "af-source": "nemo-guardrails"}
