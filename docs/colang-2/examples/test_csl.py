@@ -535,8 +535,8 @@ flow main
     activate reacting to my timer
 
     user said something
-    start repeating timer "my_timer" 0.4
-    wait 1.0
+    repeating timer "my_timer" 0.4 or wait 1.0
+    wait indefinitely
 
 # COLANG_END: test_repeating_timer
     """
