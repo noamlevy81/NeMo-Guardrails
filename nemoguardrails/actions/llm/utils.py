@@ -117,6 +117,7 @@ async def llm_call(
             result = await llm.agenerate_prompt(
                 [ChatPromptValue(messages=messages)], callbacks=all_callbacks, stop=stop
             )
+            
         except Exception as e:
             raise LLMCallException(e)
 

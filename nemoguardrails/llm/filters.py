@@ -285,7 +285,6 @@ def to_chat_messages(events: List[dict]) -> str:
 
     return messages
 
-
 def user_assistant_sequence(events: List[dict]) -> str:
     """Filter that turns an array of events into a sequence of user/assistant messages.
 

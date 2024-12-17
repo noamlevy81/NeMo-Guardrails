@@ -1,0 +1,15 @@
+models:
+  - type: main
+    engine: openai
+    model: gpt-3.5-turbo-instruct
+
+  - type: llama_topic_guard
+    engine: vllm_openai
+    parameters:
+      openai_api_base: "http://localhost:8000/v1/"
+      model_name: "llama_topic_guard"
+
+rails:
+  input:
+    flows:
+      - topic safety check input $model="llama_topic_guard"

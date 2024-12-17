@@ -225,7 +225,7 @@ def get_llm_provider(model_config: Model) -> Type[BaseLLM]:
         model_config.engine == "openai"
         and ("gpt-3.5" in model_config.model or "gpt-4" in model_config.model)
         and "instruct" not in model_config.model
-    ):
+    ) or model_config.engine == "vllm_openai":
         try:
             from langchain_openai.chat_models import ChatOpenAI
 

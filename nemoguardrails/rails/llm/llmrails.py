@@ -281,7 +281,7 @@ class LLMRails:
 
         for flow_name in self.config.rails.input.flows:
             # content safety check input/output flows are special as they have parameters
-            if flow_name.startswith("content safety check"):
+            if flow_name.startswith("content safety check") or flow_name.startswith("topic safety check"):
                 continue
             if flow_name not in existing_flows_names:
                 raise ValueError(
@@ -289,7 +289,7 @@ class LLMRails:
                 )
 
         for flow_name in self.config.rails.output.flows:
-            if flow_name.startswith("content safety check"):
+            if flow_name.startswith("content safety check") or flow_name.startswith("topic safety check"):
                 continue
             if flow_name not in existing_flows_names:
                 raise ValueError(
