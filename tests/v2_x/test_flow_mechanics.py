@@ -883,7 +883,7 @@ def test_finish_flow_event():
     flow main
       start b
       match UtteranceUserAction().Finished(final_transcript="Hi")
-      send FinishFlow(flow_id="a", return_value="success")
+      send FinishFlow(flow_id="a", context_update={"_return_value":"success"})
       match WaitAction().Finished()
     """
 
@@ -913,6 +913,66 @@ def test_finish_flow_event():
             {
                 "type": "StartUtteranceBotAction",
                 "script": "success",
+            },
+        ],
+    )
+
+
+def test_finish_flow_event_with_statement():
+    """Test the FinishFlow event that will immediately finish a flow."""
+
+    content = """
+    flow a -> $transcript
+        match UtteranceUserAction().Finished(final_transcript="a")
+        $transcript = "a_failed"
+
+    flow observe
+        when a as $ref
+            start UtteranceBotAction(script=$ref.transcript)
+
+    flow main
+        activate observe
+        match UtteranceUserAction().Finished(final_transcript="c")
+        send FinishFlow(flow_id="a", context_update={"transcript":"a_success"})
+        match WaitAction().Finished()
+    """
+
+    state = run_to_completion(_init_state(content), start_main_flow_event)
+    state = run_to_completion(
+        state,
+        {
+            "type": "UtteranceUserActionFinished",
+            "final_transcript": "a",
+        },
+    )
+    assert is_data_in_events(
+        state.outgoing_events,
+        [
+            {
+                "type": "StartUtteranceBotAction",
+                "script": "a_failed",
+            },
+            {
+                "type": "StopUtteranceBotAction",
+            },
+        ],
+    )
+    state = run_to_completion(
+        state,
+        {
+            "type": "UtteranceUserActionFinished",
+            "final_transcript": "c",
+        },
+    )
+    assert is_data_in_events(
+        state.outgoing_events,
+        [
+            {
+                "type": "StartUtteranceBotAction",
+                "script": "a_success",
+            },
+            {
+                "type": "StopUtteranceBotAction",
             },
         ],
     )

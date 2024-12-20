@@ -552,32 +552,34 @@ def _process_internal_events_without_default_matchers(
                 flow_state = state.flow_states[event.arguments["flow_instance_uid"]]
                 if not is_inactive_flow(flow_state):
                     _finish_flow(
-                        state,
-                        flow_state,
-                        event.matching_scores,
-                        arguments.get("return_value", None),
+                        state=state,
+                        flow_state=flow_state,
+                        matching_scores=event.matching_scores,
+                        context_update=arguments.get("context_update", None),
                     )
                     assert flow_state.loop_id
                     handled_event_loops.add(flow_state.loop_id)
         elif "flow_id" in event.arguments:
             flow_id = arguments.pop("flow_id", None)
             deactivate = arguments.pop("deactivate", False)
-            return_value = arguments.pop("return_value", None)
+            context_update = arguments.pop("context_update", None)
             arguments.pop("source_flow_instance_uid", None)
             arguments.pop("source_head_uid", None)
             if flow_id in state.flow_id_states:
                 for flow_state in state.flow_id_states[flow_id]:
                     if arguments.items() <= flow_state.arguments.items():
                         _finish_flow(
-                            state,
-                            flow_state,
-                            event.matching_scores,
-                            deactivate,
-                            return_value,
+                            state=state,
+                            flow_state=flow_state,
+                            matching_scores=event.matching_scores,
+                            deactivate_flow=deactivate,
+                            context_update=context_update,
                         )
                         assert flow_state.loop_id
                         handled_event_loops.add(flow_state.loop_id)
     elif event.name == InternalEvents.STOP_FLOW:
+        arguments = dict(event.arguments)
+
         if "flow_instance_uid" in event.arguments:
             flow_instance_uid = event.arguments["flow_instance_uid"]
             if flow_instance_uid in state.flow_states:
@@ -588,16 +590,18 @@ def _process_internal_events_without_default_matchers(
                         flow_state=flow_state,
                         matching_scores=event.matching_scores,
                         deactivate_flow=flow_state.activated > 0,
+                        context_update=arguments.get("context_update", None),
                     )
                     assert flow_state.loop_id
                     handled_event_loops.add(flow_state.loop_id)
         elif "flow_id" in event.arguments:
             # Extract flow parameters
-            arguments = dict(event.arguments)
+
             flow_id = arguments.pop("flow_id", None)
             deactivate = arguments.pop("deactivate", False)
             arguments.pop("source_flow_instance_uid", None)
             arguments.pop("source_head_uid", None)
+            context_update = arguments.pop("context_update", None)
             if flow_id in state.flow_id_states:
                 for flow_state in state.flow_id_states[flow_id]:
                     if arguments.items() <= flow_state.arguments.items():
@@ -606,6 +610,7 @@ def _process_internal_events_without_default_matchers(
                             flow_state=flow_state,
                             matching_scores=event.matching_scores,
                             deactivate_flow=deactivate,
+                            context_update=context_update,
                         )
                         assert flow_state.loop_id
                         handled_event_loops.add(flow_state.loop_id)
@@ -1421,6 +1426,7 @@ def _abort_flow(
     flow_state: FlowState,
     matching_scores: List[float],
     deactivate_flow: bool = False,
+    context_update: Optional[dict] = None,
 ) -> None:
     """Abort a flow instance and all its active child flows and decrement number of references of activated flow."""
 
@@ -1484,6 +1490,10 @@ def _abort_flow(
 
     flow_state.status = FlowStatus.STOPPED
 
+    # Update context if needed
+    if context_update:
+        flow_state.context.update(context_update)
+
     # Generate FlowFailed event
     event = flow_state.failed_event(matching_scores)
     _push_internal_event(state, event)
@@ -1516,7 +1526,7 @@ def _finish_flow(
     flow_state: FlowState,
     matching_scores: List[float],
     deactivate_flow: bool = False,
-    return_value: Optional[Any] = None,
+    context_update: Optional[dict] = None,
 ) -> None:
     """Finish a flow instance and all its active child flows and decrement number of references of activated flow."""
 
@@ -1601,10 +1611,12 @@ def _finish_flow(
     ):
         state.flow_states[flow_state.parent_uid].child_flow_uids.remove(flow_state.uid)
 
+    # Update context if needed
+    if context_update:
+        flow_state.context.update(context_update)
+
     # Generate FlowFinished event
     event = flow_state.finished_event(matching_scores)
-    if return_value:
-        event.arguments["return_value"] = return_value
     _push_internal_event(state, event)
 
     _log_action_or_intents(state, flow_state, matching_scores)
