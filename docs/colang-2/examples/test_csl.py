@@ -484,6 +484,62 @@ hello
     await compare_interaction_with_test_script(test_script, colang_code)
 
 
+# @pytest.mark.asyncio
+# async def test_it_finished():
+#     colang_code = """
+# # COLANG_START: test_it_finished
+# import core
+
+# flow bot greet
+#   bot say "hello"
+
+# flow test0
+#   user said "hi"
+#   await UtteranceBotAction(script="hello") as $ref
+#   await it finished $ref
+
+# flow test1
+#   user said "hi"
+#   await bot greet as $ref
+#   await it finished $ref
+
+# flow test2
+#   user said "hi"
+#   start bot greet as $ref
+#   send $ref.Stop()
+#   await it finished $ref
+
+# flow main
+#   await test0
+#   bot say "test0 success"
+
+#   start test1 as $ref
+#   match $ref.Finished()
+#   bot say "test1 success"
+
+#   start test2 as $ref
+#   match $ref.Failed()
+#   bot say "test2 success"
+
+# # COLANG_END: test_it_finished
+#     """
+
+#     test_script = """
+# # USAGE_START: test_it_finished
+# > hi
+# hello
+# test0 success
+# > hi
+# hello
+# test1 success
+# > hi
+# hello
+# Event: StopUtteranceBotAction
+# test2 success
+# # USAGE_END: test_it_finished
+#         """
+
+
 @pytest.mark.asyncio
 async def test_it_finished():
     colang_code = """
@@ -493,33 +549,13 @@ import core
 flow bot greet
   bot say "hello"
 
-flow test0
-  user said "hi"
-  await UtteranceBotAction(script="hello") as $ref
-  await it finished $ref
-
-flow test1
-  user said "hi"
-  await bot greet as $ref
-  await it finished $ref
-
-flow test2
+flow main
   user said "hi"
   start bot greet as $ref
-  send $ref.Stop()
-  await it finished $ref
-
-flow main
-  await test0
-  bot say "test0 success"
-
-  start test1 as $ref
-  match $ref.Finished()
-  bot say "test1 success"
-
-  start test2 as $ref
-  match $ref.Failed()
-  bot say "test2 success"
+  it finished $ref
+  bot say "finish"
+  it finished $ref
+  bot say "still finished"
 
 # COLANG_END: test_it_finished
     """
@@ -528,14 +564,8 @@ flow main
 # USAGE_START: test_it_finished
 > hi
 hello
-test0 success
-> hi
-hello
-test1 success
-> hi
-hello
-Event: StopUtteranceBotAction
-test2 success
+finish
+still finished
 # USAGE_END: test_it_finished
         """
 
