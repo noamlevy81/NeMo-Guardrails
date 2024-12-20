@@ -290,3 +290,13 @@ flow await_flow_by_name $flow_name $new_flow_instance_uid = None
   send StartFlow(flow_id=$flow_name, flow_instance_uid=$new_flow_instance_uid)
   match FlowStarted(flow_id=$flow_name, flow_instance_uid=$new_flow_instance_uid) as $event_ref
   match $event_ref.flow.Finished()
+
+flow wait until done $ref
+  """Wait until an action or flow is done (has finished or was stopped)."""
+
+  if type($ref) != "Action" and type($ref) != "FlowState"
+    log "flow `is done` only supports action and flow references."
+    abort
+
+  if $ref.status.value != "finished" and $ref.status.value != "stopped":
+    match $ref.Finished()

@@ -484,6 +484,43 @@ hello
     await compare_interaction_with_test_script(test_script, colang_code)
 
 
+@pytest.mark.asyncio
+async def test_wait_until_done():
+    colang_code = """
+# COLANG_START: test_wait_until_done
+import core
+
+flow handle welcome
+  user said "hi"
+  bot say "hello"
+
+flow main
+  start handle welcome as $ref
+
+  while True
+    when wait until done $ref
+      bot say "greetings done"
+      break
+    or when user said "stop"
+      print "stopping flow"
+      send $ref.Stop()
+
+# COLANG_END: test_wait_until_done
+    """
+
+    test_script = """
+# USAGE_START: test_wait_until_done
+> hi
+hello
+greetings done
+> stop
+greetings done
+# USAGE_END: test_wait_until_done
+        """
+
+    await compare_interaction_with_test_script(test_script, colang_code)
+
+
 ########################################################################################################################
 # TIMING
 ########################################################################################################################
