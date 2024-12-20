@@ -883,7 +883,7 @@ def test_finish_flow_event():
     flow main
       start b
       match UtteranceUserAction().Finished(final_transcript="Hi")
-      send FinishFlow(flow_id="a", return_value="success")
+      send FinishFlow(flow_id="a", context_update={"_return_value":"success"})
       match WaitAction().Finished()
     """
 
