@@ -313,6 +313,31 @@ Utilities
         :dedent:
 
 
+.. py:function:: it finished
+
+    Wait until a flow or action has finished. This will also check the action's or flow's state and if it has
+    already finished, continue immediately. If the awaited flow has already failed instead of finished, this flow
+    will also fail.
+
+    Note: Actions can never fail, even if stopped, but will always finish. If an action was stopped, the ActionFinished
+    event will have a ``was_stopped=True`` argument.
+
+    Example:
+
+    .. literalinclude:: ../../examples/test_csl.py
+        :language: colang
+        :start-after: # COLANG_START: test_it_finished
+        :end-before: # COLANG_END: test_it_finished
+        :dedent:
+
+
+    .. literalinclude:: ../../examples/test_csl.py
+        :language: text
+        :start-after: # USAGE_START: test_it_finished
+        :end-before: # USAGE_END: test_it_finished
+        :dedent:
+
+
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 State Tracking Flows
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
