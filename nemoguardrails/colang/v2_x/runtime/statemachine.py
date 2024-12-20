@@ -601,7 +601,7 @@ def _process_internal_events_without_default_matchers(
             deactivate = arguments.pop("deactivate", False)
             arguments.pop("source_flow_instance_uid", None)
             arguments.pop("source_head_uid", None)
-            context_update = (arguments.pop("context_update", None),)
+            context_update = arguments.pop("context_update", None)
             if flow_id in state.flow_id_states:
                 for flow_state in state.flow_id_states[flow_id]:
                     if arguments.items() <= flow_state.arguments.items():
