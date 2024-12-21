@@ -14,19 +14,20 @@
 # limitations under the License.
 
 import logging
-from typing import Dict, Optional, List
+from typing import Dict, List, Optional
 
 from langchain_core.language_models.llms import BaseLLM
 
 from nemoguardrails.actions.actions import action
 from nemoguardrails.actions.llm.utils import llm_call
 from nemoguardrails.context import llm_call_info_var
+from nemoguardrails.llm.filters import to_chat_messages
 from nemoguardrails.llm.params import llm_params
 from nemoguardrails.llm.taskmanager import LLMTaskManager
 from nemoguardrails.logging.explain import LLMCallInfo
-from nemoguardrails.llm.filters import to_chat_messages
 
 log = logging.getLogger(__name__)
+
 
 @action()
 async def topic_safety_check_input(

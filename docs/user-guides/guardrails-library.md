@@ -520,6 +520,75 @@ The `content safety check input` and `content safety check output` rails execute
 
 ### Topic Safety
 
+The topic safety feature allows you to define and enforce specific conversation rules and boundaries using NVIDIA's Topic Guard model. This model helps ensure that conversations stay within predefined topics and follow specified guidelines.
+
+#### Usage
+
+To use the topic safety check, you should:
+
+1. Include the topic guard model in the models section of your `config.yml` file (as shown in the Content Safety section above):
+
+```yaml
+models:
+  - type: "llama_topic_guard"
+    engine: nim_openai
+    parameters:
+      openai_api_base: "http://localhost:8123/v1"
+      model_name: "llama-3.1-topic-guard"
+      chat_model: true
+```
+
+2. Include the topic safety check in your rails configuration:
+
+```yaml
+rails:
+  input:
+    flows:
+      - topic safety check input $model=llama_topic_guard
+```
+
+3. Define your topic rules in the system prompt. Here's an example prompt that enforces specific conversation boundaries:
+
+```yaml
+prompts:
+  - task: topic_safety_check_input $model=llama_topic_guard
+    content: |
+      You are to act as a customer service agent, providing users with factual information in accordance to the knowledge base. Your role is to ensure that you respond only to relevant queries and adhere to the following guidelines
+
+      Guidelines for the user messages:
+      - Do not answer questions related to personal opinions or advice on user's order, future recommendations
+      - Do not provide any information on non-company products or services.
+      - Do not answer enquiries unrelated to the companny policies.
+
+      If any of the above conditions are violated, please respond with "off-topic". Otherwise, respond with "on-topic". You must respond with "on-topic" or "off-topic".
+```
+
+#### Customizing Topic Rules
+
+You can customize the topic boundaries by modifying the rules in your prompt. For example, let's add more guidelines specifying additional boundaries:
+
+```yaml
+prompts:
+  - task: topic_safety_check_input $model=llama_topic_guard
+    content: |
+      You are to act as a customer service agent, providing users with factual information in accordance to the knowledge base. Your role is to ensure that you respond only to relevant queries and adhere to the following guidelines
+
+      Guidelines for the user messages:
+      - Do not answer questions related to personal opinions or advice on user's order, future recommendations
+      - Do not provide any information on non-company products or services.
+      - Do not answer enquiries unrelated to the companny policies.
+      - Do not answer questions asking for personal details about the agent or its creators.
+      - Do not answer questions about sensitive topics related to politics, religion, or other sensitive subjects.
+      - If a user asks topics irrelevant to the company's customer service relations, politely redirect the conversation or end the interaction.
+      - Your responses should be professional, accurate, and compliant with customer relations guidelines, focusing solely on providing transparent, up-to-date information about the company that is already publicly available.
+
+      If any of the above conditions are violated, please respond with "off-topic". Otherwise, respond with "on-topic". You must respond with "on-topic" or "off-topic".
+```
+
+#### Implementation Details
+
+The 'topic safety check input' flow uses the [`topic_safety_check_input`](../../nemoguardrails/library/topic_safety/actions.py) action. The model returns a boolean value indicating whether the user input is on-topic or not. Please refer to the [topic safety example](../../examples/configs/topic_safety/README.md) for more details.
+
 ## Community Models and Libraries
 
 This category of rails relies on open-source models and libraries.
