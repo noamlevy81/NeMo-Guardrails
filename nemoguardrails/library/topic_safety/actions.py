@@ -81,12 +81,8 @@ async def topic_safety_check_input(
     messages.extend(conversation_history)
     messages.append({"type": "user", "content": user_input})
 
-    if llm.model_name == "llama-3.1-topic-guard-nim":
-        with llm_params(llm, temperature=0.01):
-            result = await llm_call(llm, messages, stop=stop)
-    else:
-        with llm_params(llm, temperature=1e-20, max_tokens=max_tokens):
-            result = await llm_call(llm, messages, stop=stop)
+    with llm_params(llm, temperature=0.01):
+        result = await llm_call(llm, messages, stop=stop)
 
     if result.lower().strip() == "off-topic":
         on_topic = False

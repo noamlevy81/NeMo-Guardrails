@@ -13,7 +13,7 @@ export NGC_API_KEY=<your NGC API key>
 docker login nvcr.io -u "$oauthtoken" -p <<< <your NGC API key>
 ```
 
-Test that you are able to use the NVIDIA NIM assets through by pulling the latest Aegis Guard container.
+Test that you are able to use the NVIDIA NIM assets through by pulling the latest TopicGuard container.
 
 ```bash
 export NIM_IMAGE=<Path to latest NIM docker container>
