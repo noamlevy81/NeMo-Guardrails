@@ -44,7 +44,7 @@ models:
     model: gpt-3.5-turbo-instruct
 
   - type: "llama_3.1_aegis_guard_2.0"
-    engine: nim_openai
+    engine: nim_self_hosted
     parameters:
       openai_api_base: "http://localhost:8123/v1"
       model_name: "llama-3.1-aegis-guard-2.0"

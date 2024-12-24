@@ -156,7 +156,7 @@ def is_content_safe_aegis_input(response: str) -> Tuple[bool, List[str]]:
     except Exception as e:
         # If there is an error, and we can't parse the response, we return unsafe assuming this is a potential jailbreaking attempt
         result = "unsafe"
-        safety_categories = ["Potential Jailbreaking Attempt"]
+        safety_categories = ["JSON parsing failed"]
 
     return (result == "safe", safety_categories)
 
@@ -194,6 +194,6 @@ def is_content_safe_aegis_output(response: str) -> Tuple[bool, List[str]]:
     except Exception as e:
         # If there is an error, and we can't parse the response, we return unsafe assuming this is a potential jailbreaking attempt
         result = "unsafe"
-        safety_categories = ["Potential Jailbreaking Attempt"]
+        safety_categories = ["JSON parsing failed"]
 
     return (result == "safe", safety_categories)
