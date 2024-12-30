@@ -419,9 +419,12 @@ The implementation for the self-check hallucination rail uses a slight variation
 
 Similar to the self-check fact-checking, we formulate the consistency checking similar to an NLI task with the original bot response as the *hypothesis* (`{{ statement }}`) and the extra generated responses as the context or *evidence* (`{{ paragraph }}`).
 
+## NVIDIA Models
+NeMo Guardrails provides out of the box connectivity for safety models trained by the NVIDIA for specialized use cases. These models shall be provided as both as HuggingFace checkpoints, and as NVIDIA NIM containers that will provide out of the box TRTLLM support with lower latency.
+
 ### Content Safety
 
-Content Safety feature acts as a robust set of guardrails designed to ensure the integrity and safety of both input and output text. This feature allows users to utilize a variety of advanced content safety models such as AEGIS, Llama Guard 3, ShieldGemma, Llama Guard 2, etc.
+The content safety checks in Guardrails act as a robust set of guardrails designed to ensure the integrity and safety of both input and output text. This feature allows users to utilize a variety of advanced content safety models such as Nvidia's Aegis Guard model, Meta's Llama Guard 3, Google's ShieldGemma, etc.c.
 
 To use the content safety check, you should:
 
@@ -433,9 +436,11 @@ models:
     engine: openai
     model: gpt-3.5-turbo-instruct
 
-  - type: shieldgemma
-    engine: nim
-    model: google/shieldgemma-9b
+  - type: "llama_3.1_aegis_guard_2.0"
+    engine: nim_self_hosted
+    parameters:
+      openai_api_base: "http://localhost:8123/v1"
+      model_name: "llama-3.1-aegis-guard-2.0"
 
   - type: llama_guard_2
     engine: vllm_openai
@@ -454,10 +459,10 @@ The `type` is a unique idenfier for the model that will be passed to the input a
 rails:
   input:
     flows:
-      - content safety check input $model=shieldgemma
+      - content safety check input $model=llama_3.1_aegis_guard_2.0
   output:
     flows:
-      - content safety check output $model=llama_guard_2
+      - content safety check output $model=llama_3.1_aegis_guard_2.0
 ```
 
 It is important to note that you must define the models in the `models` section of the `config.yml` file before using them in the input and output flows. The `content safety check input` and `content safety check output` flows are used to check the input and output text, respectively. The `$model` parameter specifies the model to be used for content safety checking. The model must be defined in the `models` section of the `config.yml` file. The `content safety check input` and `content safetry check output` flows return a boolean value indicating whether the input or output text is safe. Depending on the model, it also returns set of policy violations. Please refer to the [content safety example](../../examples/configs/content_safety/README.md) for more details.
@@ -512,6 +517,8 @@ If you're using this function for a different task with a custom prompt, you'll 
 The above is an example prompt that you can use with the *content safety check input $model=shieldgemma*. The prompt has one input variable: `{{ user_input }}`, which includes user input that should be moderated. The completion must be "yes" if the response is not safe and "no" otherwise. Optionally, some models may return a set of policy violations.
 
 The `content safety check input` and `content safety check output` rails executes the [`content_safety_check_input`](../../nemoguardrails/library/content_safety/actions.py) and [`content_safety_check_output`](../../nemoguardrails/library/content_safety/actions.py) actions respectively.
+
+### Topic Safety
 
 ## Community Models and Libraries
 

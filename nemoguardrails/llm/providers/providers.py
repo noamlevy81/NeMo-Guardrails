@@ -57,7 +57,8 @@ _providers: Dict[str, Optional[Type[BaseLLM]]] = {
     "nemollm": NeMoLLM,
     "trt_llm": TRTLLM,
     "nvidia_ai_endpoints": None,
-    "nim": None,
+    "nim": None,  # Later patched to "nvidia_ai_endpoints" for bkwd compatibility.
+    "nim_self_hosted": None,  # Later patched to "vllm_openai".
 }
 
 
@@ -194,6 +195,12 @@ def discover_langchain_providers():
             # If the `langchain_openai` package is not installed, the warning
             # will come from langchain.
             pass
+
+    # Monkey patch a "nim_self_hosted" provider to be the same as "vllm_openai".
+    # This is a hack to make "nim_self_hosted" work for downloadable NIMs. If later we have a better provider for downloadable NIMs, we can replace with that.
+    # With this, "nim_self_hosted" will be compatible with downloadable NIMs, where as just "nim" will be equivalent to "nvidia_ai_endpoints" and relevant for the build.nvidia.com NIMs
+    if "nim_self_hosted" in _providers:
+        _providers["nim_self_hosted"] = _providers["vllm_openai"]
 
     # We also do some monkey patching to make sure that all LLM providers have async support
     for provider_cls in _providers.values():

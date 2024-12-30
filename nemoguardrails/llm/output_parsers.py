@@ -12,6 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import json
 import re
 from typing import List, Tuple
 
@@ -121,3 +122,78 @@ def is_content_safe(response: str) -> Tuple[bool, List[str]]:
     # or
     # raise ValueError(f"Unknown response: {response}")
     return (False, [])
+
+
+def is_content_safe_aegis_input(response: str) -> Tuple[bool, List[str]]:
+    """Analyzes a given model response from a Guardrails check (e.g., content safety check or input check) and determines if the content is safe or not.
+
+    The function operates based on the following expected structured JSON output from the Aegis 2.0 model.
+
+    {
+        "User Safety": "unsafe",
+        "Violated Categories": "category1, category2"
+    }
+
+    Args:
+        response (str): The response string to analyze.
+
+    Returns:
+        Tuple[bool, Optional[List[str]]]: A tuple where the first element is a boolean indicating the safety of the content (True if safe, False otherwise),
+        and the second element is a list of violated policies, if any.
+    """
+    try:
+        # try parsing it as json
+        parsed_json_result = json.loads(response)
+        assert "User Safety" in parsed_json_result
+        result = parsed_json_result["User Safety"].lower()
+        if "Safety Categories" in parsed_json_result:
+            safety_categories = [
+                cat.strip()
+                for cat in parsed_json_result["Safety Categories"].split(",")
+            ]
+        else:
+            safety_categories = []
+    except Exception as e:
+        # If there is an error, and we can't parse the response, we return unsafe assuming this is a potential jailbreaking attempt
+        result = "unsafe"
+        safety_categories = ["JSON parsing failed"]
+
+    return (result == "safe", safety_categories)
+
+
+def is_content_safe_aegis_output(response: str) -> Tuple[bool, List[str]]:
+    """Analyzes a given model response from a Guardrails check (e.g., content safety check or output check) and determines if the content is safe or not.
+
+    The function operates based on the following expected structured JSON output from the Aegis 2.0 model.
+
+    {
+        "User Safety": "unsafe",
+        "Response Safety": "unsafe",
+        "Violated Categories": "category1, category2"
+    }
+
+    Args:
+        response (str): The response string to analyze.
+
+    Returns:
+        Tuple[bool, Optional[List[str]]]: A tuple where the first element is a boolean indicating the safety of the content (True if safe, False otherwise),
+        and the second element is a list of violated policies, if any.
+    """
+    try:
+        # try parsing it as json
+        parsed_json_result = json.loads(response)
+        assert "Response Safety" in parsed_json_result
+        result = parsed_json_result["Response Safety"].lower()
+        if "Safety Categories" in parsed_json_result:
+            safety_categories = [
+                cat.strip()
+                for cat in parsed_json_result["Safety Categories"].split(",")
+            ]
+        else:
+            safety_categories = []
+    except Exception as e:
+        # If there is an error, and we can't parse the response, we return unsafe assuming this is a potential jailbreaking attempt
+        result = "unsafe"
+        safety_categories = ["JSON parsing failed"]
+
+    return (result == "safe", safety_categories)
