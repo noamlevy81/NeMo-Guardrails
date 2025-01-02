@@ -67,7 +67,10 @@ def initialize_model(
                 f"Encountered FileNotFound Error when attempting to open snowflake.pkl at {classifier_path}"
             )
     else:
-        raise ValueError("No valid embedding model name provided!")
+        raise ValueError(
+            f"Valid embedding-based jailbreak detection models are `nvidia/nv-embedqa-e5-v5` and "
+            f"`snowflake/snowflake-arctic-embed-m-long` but {embedding_model} was provided"
+        )
 
     return embedder, classifier
 
@@ -96,5 +99,6 @@ def check_jailbreak(
     classification = np.argmax(prediction)
     # We do not use the probability at this time. Keeping here as placeholder.
     probability = np.max(prediction)
+    score = probability if bool(classification) else -probability
     # classification will be 1 or 0 -- cast to boolean.
-    return {"jailbreak": bool(classification)}
+    return {"jailbreak": bool(classification), "score": score}
