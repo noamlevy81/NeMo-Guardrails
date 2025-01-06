@@ -226,7 +226,10 @@ def get_llm_provider(model_config: Model) -> Type[BaseLLM]:
         and ("gpt-3.5" in model_config.model or "gpt-4" in model_config.model)
         and "instruct" not in model_config.model
     ) or (
-        (model_config.engine == "vllm_openai" or model_config.engine == "nim_openai")
+        (
+            model_config.engine == "vllm_openai"
+            or model_config.engine == "nim_self_hosted"
+        )
         and model_config.parameters.get("chat_model", False)
     ):
         # Remove the chat_model parameter if present

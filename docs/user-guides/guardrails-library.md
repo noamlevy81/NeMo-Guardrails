@@ -531,7 +531,7 @@ To use the topic safety check, you should:
 ```yaml
 models:
   - type: "llama_topic_guard"
-    engine: nim_openai
+    engine: nim_self_hosted
     parameters:
       openai_api_base: "http://localhost:8123/v1"
       model_name: "llama-3.1-topic-guard"
