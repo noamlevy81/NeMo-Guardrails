@@ -1,5 +1,5 @@
 prompts:
-  - task: topic_safety_check_input $model=llama_topic_guard
+  - task: topic_safety_check_input $model=topic_control
     content: |
       You are to act as a customer service agent, providing users with factual information in accordance to the knowledge base. Your role is to ensure that you respond only to relevant queries and adhere to the following guidelines
 

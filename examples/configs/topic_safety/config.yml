@@ -3,14 +3,13 @@ models:
     engine: openai
     model: gpt-3.5-turbo-instruct
 
-  - type: llama_topic_guard
-    engine: nim_self_hosted
+  - type: topic_control
+    engine: nim
     parameters:
-      openai_api_base: "http://localhost:8000/v1/"
-      model_name: "llama-3.1-topic-guard"
-      chat_model: true
+      base_url: "http://localhost:8000/v1/"
+      model_name: "llama-3.1-nemoguard-8b-topic-control"
 
 rails:
   input:
     flows:
-      - topic safety check input $model="llama_topic_guard"
+      - topic safety check input $model=topic_control

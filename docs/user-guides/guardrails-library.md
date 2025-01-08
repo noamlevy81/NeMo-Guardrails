@@ -520,22 +520,21 @@ The `content safety check input` and `content safety check output` rails execute
 
 ### Topic Safety
 
-The topic safety feature allows you to define and enforce specific conversation rules and boundaries using NVIDIA's Topic Guard model. This model helps ensure that conversations stay within predefined topics and follow specified guidelines.
+The topic safety feature allows you to define and enforce specific conversation rules and boundaries using NVIDIA's Topic Control model. This model helps ensure that conversations stay within predefined topics and follow specified guidelines.
 
 #### Usage
 
 To use the topic safety check, you should:
 
-1. Include the topic guard model in the models section of your `config.yml` file (as shown in the Content Safety section above):
+1. Include the topic control model in the models section of your `config.yml` file (as shown in the Content Safety section above):
 
 ```yaml
 models:
-  - type: "llama_topic_guard"
-    engine: nim_self_hosted
+  - type: "topic_control"
+    engine: nim
     parameters:
-      openai_api_base: "http://localhost:8123/v1"
-      model_name: "llama-3.1-topic-guard"
-      chat_model: true
+      base_url: "http://localhost:8123/v1"
+      model_name: "llama-3.1-nemoguard-8b-topic-control"
 ```
 
 2. Include the topic safety check in your rails configuration:
@@ -544,14 +543,14 @@ models:
 rails:
   input:
     flows:
-      - topic safety check input $model=llama_topic_guard
+      - topic safety check input $model=topic_control
 ```
 
 3. Define your topic rules in the system prompt. Here's an example prompt that enforces specific conversation boundaries:
 
 ```yaml
 prompts:
-  - task: topic_safety_check_input $model=llama_topic_guard
+  - task: topic_safety_check_input $model=topic_control
     content: |
       You are to act as a customer service agent, providing users with factual information in accordance to the knowledge base. Your role is to ensure that you respond only to relevant queries and adhere to the following guidelines
 
@@ -569,7 +568,7 @@ You can customize the topic boundaries by modifying the rules in your prompt. Fo
 
 ```yaml
 prompts:
-  - task: topic_safety_check_input $model=llama_topic_guard
+  - task: topic_safety_check_input $model=topic_control
     content: |
       You are to act as a customer service agent, providing users with factual information in accordance to the knowledge base. Your role is to ensure that you respond only to relevant queries and adhere to the following guidelines
 

@@ -1,7 +1,7 @@
-# Llama 3.1 Topic Guard Deployment Instructions
-The TopicGuard model will be available to download as a LoRA adapter module through HuggingFace, and as an [NVIDIA NIM](https://docs.nvidia.com/nim/large-language-models/latest/introduction.html) for low latency optimized inference with [NVIDIA TensorRT-LLM](https://docs.nvidia.com/tensorrt-llm/index.html).
+# Llama-3.1-Nemoguard-8B-Topic-Control Deployment Instructions
+The TopicControl model will be available to download as a LoRA adapter module through HuggingFace, and as an [NVIDIA NIM](https://docs.nvidia.com/nim/large-language-models/latest/introduction.html) for low latency optimized inference with [NVIDIA TensorRT-LLM](https://docs.nvidia.com/tensorrt-llm/index.html).
 
-This guide covers how to deploy the TopicGuard model as a NIM, and how to then use the deployed NIM in a NeMo Guardrails configuration.
+This guide covers how to deploy the TopicControl model as a NIM, and how to then use the deployed NIM in a NeMo Guardrails configuration.
 
 ## NIM Deployment
 
@@ -13,11 +13,11 @@ export NGC_API_KEY=<your NGC API key>
 docker login nvcr.io -u "$oauthtoken" -p <<< <your NGC API key>
 ```
 
-Test that you are able to use the NVIDIA NIM assets through by pulling the latest TopicGuard container.
+Test that you are able to use the NVIDIA NIM assets through by pulling the latest TopicControl container.
 
 ```bash
 export NIM_IMAGE=<Path to latest NIM docker container>
-export MODEL_NAME="llama-3.1-topic-guard"
+export MODEL_NAME="llama-3.1-nemoguard-8b-topic-control"
 docker pull $NIM_IMAGE
 ```
 
@@ -43,24 +43,21 @@ models:
     engine: openai
     model: gpt-3.5-turbo-instruct
 
-  - type: "llama_topic_guard"
-    engine: nim_self_hosted
+  - type: "topic_control"
+    engine: nim
     parameters:
-      openai_api_base: "http://localhost:8123/v1"
-      model_name: "llama-3.1-topic-guard"
+      base_url: "http://localhost:8123/v1"
+      model_name: "llama-3.1-nemoguard-8b-topic-control"
 
 rails:
   input:
     flows:
-      - content safety check input $model=llama_topic_guard
-  output:
-    flows:
-      - content safety check output $model=llama_topic_guard
+      - topic safety check input $model=topic_control
 ```
 A few things to note:
-- `parameters.openai_api_base` should contain the IP address of the machine the NIM was hosted on, the port should match the tunnel forwarding port specified in the docker run command.
+- `parameters.base_url` should contain the IP address of the machine the NIM was hosted on, the port should match the tunnel forwarding port specified in the docker run command.
 - `parameters.model_name` in the Guardrails configuration needs to match the `$MODEL_NAME` used when running the NIM container.
-- The `rails` definitions should list `llama_topic_guard` as the model.
+- The `rails` definitions should list `topic_control` as the model.
 
 #### Bonus: Caching the optimized TRTLLM inference engines
 If you'd like to not build TRTLLM engines from scratch every time you run the NIM container, you can cache it in the first run by just adding a flag to mount a local directory inside the docker to store the model cache.
@@ -70,7 +67,7 @@ To achieve this, you simply need to mount the folder containing the cached TRTLL
 ### To bind a $LOCAL_NIM_CACHE folder to "/opt/nim/.cache"
 export LOCAL_NIM_CACHE=<PATH TO DIRECTORY WHERE YOU WANT TO SAVE TRTLLM ENGINE ASSETS>
 mkdir -p $LOCAL_NIM_CACHE
-sudo chmod 777 $LOCAL_NIM_CACHE
+sudo chmod 666 $LOCAL_NIM_CACHE
 ```
 Now mount this directory while running the docker container to store cached assets in this directory, so that mounting it subsequently will cause the container to read the cached assets instead of rebuilding them.
 
