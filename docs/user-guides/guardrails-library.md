@@ -436,10 +436,10 @@ models:
     engine: openai
     model: gpt-3.5-turbo-instruct
 
-  - type: "llama_3.1_aegis_guard_2.0"
-    engine: nim_self_hosted
+  - type: "llama-3.1-aegis-guard-2.0"
+    engine: nim
     parameters:
-      openai_api_base: "http://localhost:8123/v1"
+      base_url: "http://localhost:8123/v1"
       model_name: "llama-3.1-aegis-guard-2.0"
 
   - type: llama_guard_2
@@ -459,10 +459,10 @@ The `type` is a unique idenfier for the model that will be passed to the input a
 rails:
   input:
     flows:
-      - content safety check input $model=llama_3.1_aegis_guard_2.0
+      - content safety check input $model=llama-3.1-aegis-guard-2.0
   output:
     flows:
-      - content safety check output $model=llama_3.1_aegis_guard_2.0
+      - content safety check output $model=llama-3.1-aegis-guard-2.0
 ```
 
 It is important to note that you must define the models in the `models` section of the `config.yml` file before using them in the input and output flows. The `content safety check input` and `content safety check output` flows are used to check the input and output text, respectively. The `$model` parameter specifies the model to be used for content safety checking. The model must be defined in the `models` section of the `config.yml` file. The `content safety check input` and `content safetry check output` flows return a boolean value indicating whether the input or output text is safe. Depending on the model, it also returns set of policy violations. Please refer to the [content safety example](../../examples/configs/content_safety/README.md) for more details.

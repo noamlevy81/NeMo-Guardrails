@@ -84,7 +84,7 @@ The meaning of the attributes is as follows:
 
 You can use any LLM provider that is supported by LangChain, e.g., `ai21`, `aleph_alpha`, `anthropic`, `anyscale`, `azure`, `cohere`, `huggingface_endpoint`, `huggingface_hub`, `openai`, `self_hosted`, `self_hosted_hugging_face`. Check out the LangChain official documentation for the full list.
 
-In addition to the above LangChain providers, connecting to [Nvidia NIMs](https://docs.nvidia.com/nim/index.html) is supported using `nvidia_ai_endpoints` for Nvidia hosted NIMs (accessible through an Nvidia AI Enterprise license) and `nim_self_hosted` for locally downloaded and hosted NIM containers.
+In addition to the above LangChain providers, connecting to [Nvidia NIMs](https://docs.nvidia.com/nim/index.html) is supported using the engine `nvidia_ai_endpoints` or synonymously `nim`, for both Nvidia hosted NIMs (accessible through an Nvidia AI Enterprise license) and for locally downloaded and self-hosted NIM containers.
 
 ```{note}
 To use any of the providers, you must install additional packages; when you first try to use a configuration with a new provider, you typically receive an error from LangChain that instructs which packages you should install.
@@ -104,12 +104,12 @@ NIMs can be self hosted, using downloadable containers, or Nvidia hosted and acc
 NeMo Guardrails supports connecting to NIMs as follows:
 
 ##### Self-hosted NIMs
-To connect to self-hosted NIMs, set the engine to `nim_self_hosted`.
+To connect to self-hosted NIMs, set the engine to `nim`. Also make sure the model name matches one of the model names the hosted NIM supports (you can get a list of supported models using a GET request to v1/models endpoint).
 
 ```yaml
 models:
   - type: main
-    engine: nim_self_hosted
+    engine: nim
     model: <MODEL_NAME>
     parameters:
       base_url: <NIM_ENDPOINT_URL>
@@ -120,7 +120,7 @@ For example, to connect to a locally deployed `meta/llama3-8b-instruct` model, o
 ```yaml
 models:
   - type: main
-    engine: nim_self_hosted
+    engine: nim
     model: meta/llama3-8b-instruct
     parameters:
       base_url: http://localhost:8000/v1
@@ -136,7 +136,7 @@ To use an LLM model through the NVIDIA AI Endpoints, use the following model con
 ```yaml
 models:
   - type: main
-    engine: nvidia_ai_endpoints
+    engine: nim
     model: <MODEL_NAME>
 ```
 
@@ -145,12 +145,12 @@ For example, to use the `llama3-8b-instruct` model, use the following model conf
 ```yaml
 models:
   - type: main
-    engine: nvidia_ai_endpoints
+    engine: nim
     model: meta/llama3-8b-instruct
 ```
 
 ```{important}
-To use the `nvidia_ai_endpoints` LLM provider, you must install the `langchain-nvidia-ai-endpoints` package using the command `pip install langchain-nvidia-ai-endpoints`, and configure a valid `NVIDIA_API_KEY`.
+To use the `nvidia_ai_endpoints` or `nim` LLM provider, you must install the `langchain-nvidia-ai-endpoints` package using the command `pip install langchain-nvidia-ai-endpoints`, and configure a valid `NVIDIA_API_KEY`.
 ```
 
 For further information, see the [user guide](./llm/nvidia-ai-endpoints/README.md).
@@ -327,13 +327,13 @@ You can use different LLM models for specific tasks. For example, you can use a 
 models:
   - type: main
     model: meta/llama-3.1-8b-instruct
-    engine: nvidia_ai_endpoints
+    engine: nim
   - type: self_check_input
     model: meta/llama3-8b-instruct
-    engine: nvidia_ai_endpoints
+    engine: nim
   - type: self_check_output
     model: meta/llama-3.1-70b-instruct
-    engine: nvidia_ai_endpoints
+    engine: nim
 ```
 
 In the previous example, the `self_check_input` and `self_check_output` tasks use different models. It is even possible to get more granular and use different models for a task like `generate_user_intent`:
@@ -342,16 +342,16 @@ In the previous example, the `self_check_input` and `self_check_output` tasks us
 models:
   - type: main
     model: meta/llama-3.1-8b-instruct
-    engine: nvidia_ai_endpoints
+    engine: nim
   - type: self_check_input
     model: meta/llama3-8b-instruct
-    engine: nvidia_ai_endpoints
+    engine: nim
   - type: self_check_output
     model: meta/llama-3.1-70b-instruct
-    engine: nvidia_ai_endpoints
+    engine: nim
   - type: generate_user_intent
     model: meta/llama-3.1-8b-instruct
-    engine: nvidia_ai_endpoints
+    engine: nim
 ```
 
 ```{tip}
