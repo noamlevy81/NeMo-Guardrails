@@ -43,25 +43,24 @@ models:
     engine: openai
     model: gpt-3.5-turbo-instruct
 
-  - type: "llama_3.1_aegis_guard_2.0"
-    engine: nim_self_hosted
+  - type: "llama-3.1-aegis-guard-2.0"
+    engine: nim
     parameters:
-      openai_api_base: "http://localhost:8123/v1"
+      base_url: "http://localhost:8123/v1"
       model_name: "llama-3.1-aegis-guard-2.0"
 
 rails:
   input:
     flows:
-      - content safety check input $model=llama_3.1_aegis_guard_2.0
+      - content safety check input $model=llama-3.1-aegis-guard-2.0
   output:
     flows:
-      - content safety check output $model=llama_3.1_aegis_guard_2.0
+      - content safety check output $model=llama-3.1-aegis-guard-2.0
 ```
 A few things to note:
-- `parameters.openai_api_base` should contain the IP address of the machine the NIM was hosted on, the port should match the tunnel forwarding port specified in the docker run command.
+- `parameters.base_url` should contain the IP address of the machine the NIM was hosted on, the port should match the tunnel forwarding port specified in the docker run command.
 - `parameters.model_name` in the Guardrails configuration needs to match the `$MODEL_NAME` used when running the NIM container.
-- The `type` field needs to replace non-word characters like dashes (`-`) with underscores (`_`) to register the model type with the Guardrails runtime. In this case, `llama-3.1-aegis-guard-2.0` becomes `llama_3.1_aegis_guard_2.0`.
-- The `rails` definitions should list `llama_3.1_aegis_guard_2.0` as the model.
+- The `rails` definitions should list `llama-3.1-aegis-guard-2.0` as the model.
 
 #### Bonus: Caching the optimized TRTLLM inference engines
 If you'd like to not build TRTLLM engines from scratch every time you run the NIM container, you can cache it in the first run by just adding a flag to mount a local directory inside the docker to store the model cache.
@@ -71,7 +70,7 @@ To achieve this, you simply need to mount the folder containing the cached TRTLL
 ### To bind a $LOCAL_NIM_CACHE folder to "/opt/nim/.cache"
 export LOCAL_NIM_CACHE=<PATH TO DIRECTORY WHERE YOU WANT TO SAVE TRTLLM ENGINE ASSETS>
 mkdir -p $LOCAL_NIM_CACHE
-sudo chmod 777 $LOCAL_NIM_CACHE
+sudo chmod 666 $LOCAL_NIM_CACHE
 ```
 Now mount this directory while running the docker container to store cached assets in this directory, so that mounting it subsequently will cause the container to read the cached assets instead of rebuilding them.
 

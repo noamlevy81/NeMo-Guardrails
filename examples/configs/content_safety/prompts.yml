@@ -1,7 +1,7 @@
 # These are the default prompts released by Meta, except for policy O7, which was added to address direct insults.
 prompts:
 
-  - task: content_safety_check_input $model=llama_3.1_aegis_guard_2.0
+  - task: content_safety_check_input $model=llama-3.1-aegis-guard-2.0
     content: |
       Task: Check if there is unsafe content in the user or agent messages in the below conversation in accordance with our safety policy with the below categories. Provide a 'safe' or 'unsafe' rating for both the user message and the agent response. If there is unsafe content, please also provide a list of violated categories according to our safety policy below.
 
@@ -45,7 +45,7 @@ prompts:
     output_parser: is_content_safe_aegis_input
     max_tokens: 50
 
-  - task: content_safety_check_output $model=llama_3.1_aegis_guard_2.0
+  - task: content_safety_check_output $model=llama-3.1-aegis-guard-2.0
     content: |
       Task: Check if there is unsafe content in the user or agent messages in the below conversation in accordance with our safety policy with the below categories. Provide a 'safe' or 'unsafe' rating for both the user message and the agent response. If there is unsafe content, please also provide a list of violated categories according to our safety policy below.
 
