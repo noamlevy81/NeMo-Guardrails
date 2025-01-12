@@ -69,6 +69,17 @@ async def topic_safety_check_input(
     system_prompt = llm_task_manager.render_task_prompt(
         task=task,
     )
+
+    TOPIC_SAFETY_OUTPUT_RESTRICTION = (
+        'If any of the above conditions are violated, please respond with "off-topic". '
+        'Otherwise, respond with "on-topic". '
+        'You must respond with "on-topic" or "off-topic".'
+    )
+
+    system_prompt = system_prompt.strip()
+    if not system_prompt.endswith(TOPIC_SAFETY_OUTPUT_RESTRICTION):
+        system_prompt = f"{system_prompt}\n\n{TOPIC_SAFETY_OUTPUT_RESTRICTION}"
+
     stop = llm_task_manager.get_stop_tokens(task=task)
     max_tokens = llm_task_manager.get_max_tokens(task=task)
 

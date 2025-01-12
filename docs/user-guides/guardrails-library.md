@@ -558,9 +558,9 @@ prompts:
       - Do not answer questions related to personal opinions or advice on user's order, future recommendations
       - Do not provide any information on non-company products or services.
       - Do not answer enquiries unrelated to the companny policies.
-
-      If any of the above conditions are violated, please respond with "off-topic". Otherwise, respond with "on-topic". You must respond with "on-topic" or "off-topic".
 ```
+
+We need to make sure that the system prompt ends with the topic safety output restriction - `If any of the above conditions are violated, please respond with "off-topic". Otherwise, respond with "on-topic". You must respond with "on-topic" or "off-topic".` This condition is automatically added to the system prompt by the topic safety check input flow. In case you would like to customize the output restriction, you can do so by modifying the `TOPIC_SAFETY_OUTPUT_RESTRICTION` variable in the [`topic_safety_check_input`](../../nemoguardrails/library/topic_safety/actions.py) action.
 
 #### Customizing Topic Rules
 
@@ -580,8 +580,6 @@ prompts:
       - Do not answer questions about sensitive topics related to politics, religion, or other sensitive subjects.
       - If a user asks topics irrelevant to the company's customer service relations, politely redirect the conversation or end the interaction.
       - Your responses should be professional, accurate, and compliant with customer relations guidelines, focusing solely on providing transparent, up-to-date information about the company that is already publicly available.
-
-      If any of the above conditions are violated, please respond with "off-topic". Otherwise, respond with "on-topic". You must respond with "on-topic" or "off-topic".
 ```
 
 #### Implementation Details
