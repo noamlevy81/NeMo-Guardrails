@@ -3,6 +3,8 @@ models:
     engine: openai
     model: gpt-3.5-turbo-instruct
 
+  # Sample for running the model as a locally downloaded NIM
+  # If you want to use NVIDIA AI Endpoints, change the model config accordingly
   - type: topic_control
     engine: nim
     parameters:

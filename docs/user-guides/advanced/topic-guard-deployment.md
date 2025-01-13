@@ -34,7 +34,7 @@ docker run -it --name=$MODEL_NAME \
 ```
 
 #### Use the running NIM in your Guardrails App
-Any locally running NIM exposes the standard OpenAI interface on the `v1/completions` and `v1/chat/completions` endpoints. NeMo Guardrails provides out of the box support engines that support the standard LLM interfaces. One such engine is LangChain's `vllm_openai`.
+Any locally running NIM exposes the standard OpenAI interface on the `v1/completions` and `v1/chat/completions` endpoints. NeMo Guardrails provides out of the box support engines that support the standard LLM interfaces. For locally deployed NIMs, you need to use the engine `nim`.
 
 Thus, your Guardrails configuration file can look like:
 ```yml
@@ -82,3 +82,11 @@ docker run -it --name=$MODEL_NAME \
     -p 8123:8000 \
     $NIM_IMAGE
 ```
+
+## More details on TopicControl model
+
+For more details on the TopicControl model, check out the other resources:
+
+- NeMo Guardrails library for [NVIDIA NemoGuard models](../guardrails-library.md#nvidia-models)
+- [TopicControl topic safety example config](../../../examples/configs/topic_safety/README.md)
+- [Paper at EMNLP 2024](https://arxiv.org/abs/2404.03820)
