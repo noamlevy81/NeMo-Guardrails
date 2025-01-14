@@ -831,9 +831,14 @@ To compute the perplexity of a string, the current implementation uses the `gpt2
 
 **NOTE**: in future versions, multiple options will be supported.
 
+#### Model-based Jailbreak Detections
+
+There is currently one available model-based detection, using a random forest-based detector trained on [`snowflake/snowflake-arctic-embed-m-long`](https://huggingface.co/Snowflake/snowflake-arctic-embed-m-long) embeddings.
+This model 
+
 #### Setup
 
-The recommended way for using the jailbreak detection heuristics is to [deploy the jailbreak detection heuristics server](advanced/jailbreak-detection-heuristics-deployment.md) separately.
+The recommended way for using the jailbreak detection heuristics and models is to [deploy the jailbreak detection server](advanced/jailbreak-detection-deployment.md) separately.
 
 For quick testing, you can use the jailbreak detection heuristics rail locally by first installing `transformers` and `tourch`.
 
