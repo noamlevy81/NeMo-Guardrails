@@ -23,11 +23,8 @@ RUN python -c "from transformers import GPT2LMHeadModel, GPT2TokenizerFast; GPT2
 
 # Predownload embedding-based jailbreak detection models, set environment variable for path
 WORKDIR /models
-RUN git clone https://huggingface.co/nvidia/embedding-jailbreak-detection
-ENV EMBEDDING_CLASSIFIER_PATH=/models/embedding-jailbreak-detection
-
-# To use nvidia/nv-embedqa-e5-v5 model, uncomment the line below and set your API key
-# ENV NVIDIA_API_KEY=<your_api_key>
+RUN git clone git@hf.co:/nvidia/NemoGuard-JailbreakDetect
+ENV EMBEDDING_CLASSIFIER_PATH=/models/NemoGuard-JailbreakDetect
 
 # Expose a port for the server
 EXPOSE 1337
