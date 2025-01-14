@@ -14,6 +14,8 @@
 # limitations under the License.
 
 import os
+import pickle
+from typing import Tuple
 import torch
 import numpy as np
 from transformers import AutoTokenizer, AutoModel
@@ -64,3 +66,18 @@ class NvEmbedE5:
             extra_body={"input_type": "query", "truncate": "END"},
         )
         return np.array(response.data[0].embedding, dtype="float32")
+
+
+class JailbreakClassifier:
+    def __init__(self, random_forest_path: str):
+        self.embed = SnowflakeEmbed()
+        with open(random_forest_path, "rb") as fd:
+            self.classifier = pickle.load(fd)
+
+    def __call__(self, text: str) -> Tuple[bool, float]:
+        e = self.embed(text)
+        probs = self.classifier.predict_proba([e])
+        classification = np.argmax(probs)
+        prob = np.max(probs)
+        score = -prob if classification == 0 else prob
+        return bool(classification), float(score)

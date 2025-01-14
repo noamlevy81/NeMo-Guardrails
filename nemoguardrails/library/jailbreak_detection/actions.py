@@ -69,7 +69,6 @@ async def jailbreak_detection_heuristics(
 @action()
 async def jailbreak_detection_model(
     llm_task_manager: LLMTaskManager,
-    embedding_name: Optional[str] = None,
     context: Optional[dict] = None,
 ) -> bool:
     prompt: str = ""
@@ -80,34 +79,23 @@ async def jailbreak_detection_model(
 
     if context is not None:
         prompt = context.get("user_message", "")
-        embedding_name = embedding_name or context.get("embedding", None)
-
-    embedding_name = (
-        jailbreak_config.embedding if embedding_name is not None else embedding_name
-    )
-
-    if embedding_name is None:
-        error_msg = (
-            "Embedding model name is required for jailbreak check, "
-            "please provide it as an argument in the config.yml. "
-            "e.g. jailbreak model input $embedding=nvidia/nv-embedqa-mistral-7b-v2"
-        )
-        raise ValueError(error_msg)
 
     if not jailbreak_api_url:
         from nemoguardrails.library.jailbreak_detection.model_based.checks import (
             check_jailbreak,
+            initialize_model,
         )
 
         log.warning(
             "No jailbreak detection endpoint set. Running in-process, NOT RECOMMENDED FOR PRODUCTION."
         )
-        jailbreak = check_jailbreak(prompt=prompt, embedder=embedding_name)
+        classifier = initialize_model()
+        jailbreak = check_jailbreak(prompt=prompt, classifier=classifier)
 
         return jailbreak["jailbreak"]
 
     jailbreak = await jailbreak_detection_model_request(
-        prompt=prompt, embedding_model=embedding_name, api_url=jailbreak_api_url
+        prompt=prompt, api_url=jailbreak_api_url
     )
 
     if jailbreak is None:

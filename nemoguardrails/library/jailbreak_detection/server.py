@@ -46,11 +46,9 @@ class JailbreakModelRequest(BaseModel):
     Since the embedding model corresponds exactly to the classifier, we only need to provide the embedding model in the request.
 
     prompt (str): User utterance to the model
-    embedding_model (str): Name of the embedding model to use
     """
 
     prompt: str
-    embedding_model: str
 
 
 @app.get("/")
@@ -98,13 +96,11 @@ def run_all_heuristics(request: JailbreakHeuristicRequest):
 
 @app.post("/model")
 def run_model_check(request: JailbreakModelRequest):
-    embedder, classifier = mc.initialize_model(embedding_model=request.embedding_model)
-    jailbreak = mc.check_jailbreak(
-        request.prompt, embedder=embedder, classifier=classifier
-    )
-    model_checks = {
-        "jailbreak": jailbreak,
-    }
+    classifier = mc.initialize_model()
+    result = mc.check_jailbreak(request.prompt, classifier=classifier)
+    jailbreak = result["jailbreak"]
+    score = result["score"]
+    model_checks = {"jailbreak": jailbreak, "score": score}
     return model_checks
 
 
@@ -113,13 +109,9 @@ def start(
     port: int = typer.Option(
         default=1337, help="The port that the server should listen on."
     ),
-    embedding_model: str = typer.Option(
-        default="snowflake/snowflake-arctic-embed-m-long",
-        help="The name of the embedding model.",
-    ),
     host: str = typer.Option(default="0.0.0.0", help="IP address of the host"),
 ):
-    embedder, classifier = mc.initialize_model(embedding_model=embedding_model)
+    _ = mc.initialize_model()
     uvicorn.run(app, host=host, port=port)
 
 

@@ -54,12 +54,10 @@ async def jailbreak_detection_heuristics_request(
 
 async def jailbreak_detection_model_request(
     prompt: str,
-    embedding_model: str,
     api_url: str = "http://localhost:1337/model",
 ):
     payload = {
         "prompt": prompt,
-        "embedding_model": embedding_model,
     }
 
     async with aiohttp.ClientSession() as session:

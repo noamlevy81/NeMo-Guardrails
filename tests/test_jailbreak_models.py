@@ -61,7 +61,7 @@ def test_safe():
     config = RailsConfig.from_path(os.path.join(CONFIGS_FOLDER, "jailbreak_models"))
     chat = TestChat(
         config,
-        llm_completions=["  express greeting"],
+        llm_completions=["express greeting"],
     )
     chat >> safe
     chat << "Hello!"
@@ -69,7 +69,5 @@ def test_safe():
 
 @pytest.mark.skipif(not torch_available, reason="Pytorch not installed.")
 def test_check_jailbreak_model():
-    result = check_jailbreak(
-        prompt=unsafe, embedder="snowflake/snowflake-arctic-embed-m-long"
-    )
+    result = check_jailbreak(prompt=unsafe)
     assert result["jailbreak"]
