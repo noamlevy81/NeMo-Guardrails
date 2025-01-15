@@ -424,7 +424,7 @@ NeMo Guardrails provides out of the box connectivity for safety models trained b
 
 ### Content Safety
 
-The content safety checks in Guardrails act as a robust set of guardrails designed to ensure the integrity and safety of both input and output text. This feature allows users to utilize a variety of advanced content safety models such as Nvidia's Aegis Guard model, Meta's Llama Guard 3, Google's ShieldGemma, etc.c.
+The content safety checks in Guardrails act as a robust set of guardrails designed to ensure the integrity and safety of both input and output text. This feature allows users to utilize a variety of advanced content safety models such as Nvidia's [NemoGuard ContentSafety](https://docs.nvidia.com/nim/#nemoguard) model, Meta's [Llama Guard 3](https://www.llama.com/docs/model-cards-and-prompt-formats/llama-guard-3/), Google's [ShieldGemma](https://ai.google.dev/gemma/docs/shieldgemma), etc.
 
 To use the content safety check, you should:
 
@@ -436,11 +436,11 @@ models:
     engine: openai
     model: gpt-3.5-turbo-instruct
 
-  - type: "llama-3.1-aegis-guard-2.0"
+  - type: "content_safety"
     engine: nim
     parameters:
       base_url: "http://localhost:8123/v1"
-      model_name: "llama-3.1-aegis-guard-2.0"
+      model_name: "llama-3.1-nemoguard-8b-content-safety"
 
   - type: llama_guard_2
     engine: vllm_openai
@@ -459,10 +459,10 @@ The `type` is a unique idenfier for the model that will be passed to the input a
 rails:
   input:
     flows:
-      - content safety check input $model=llama-3.1-aegis-guard-2.0
+      - content safety check input $model=content_safety
   output:
     flows:
-      - content safety check output $model=llama-3.1-aegis-guard-2.0
+      - content safety check output $model=content_safety
 ```
 
 It is important to note that you must define the models in the `models` section of the `config.yml` file before using them in the input and output flows. The `content safety check input` and `content safety check output` flows are used to check the input and output text, respectively. The `$model` parameter specifies the model to be used for content safety checking. The model must be defined in the `models` section of the `config.yml` file. The `content safety check input` and `content safetry check output` flows return a boolean value indicating whether the input or output text is safe. Depending on the model, it also returns set of policy violations. Please refer to the [content safety example](../../examples/configs/content_safety/README.md) for more details.

@@ -124,10 +124,10 @@ def is_content_safe(response: str) -> Tuple[bool, List[str]]:
     return (False, [])
 
 
-def is_content_safe_aegis_input(response: str) -> Tuple[bool, List[str]]:
+def nemoguard_parse_prompt_safety(response: str) -> Tuple[bool, List[str]]:
     """Analyzes a given model response from a Guardrails check (e.g., content safety check or input check) and determines if the content is safe or not.
 
-    The function operates based on the following expected structured JSON output from the Aegis 2.0 model.
+    The function operates based on the following expected structured JSON output from the NemoGuard ContentSafety model.
 
     {
         "User Safety": "unsafe",
@@ -161,10 +161,10 @@ def is_content_safe_aegis_input(response: str) -> Tuple[bool, List[str]]:
     return (result == "safe", safety_categories)
 
 
-def is_content_safe_aegis_output(response: str) -> Tuple[bool, List[str]]:
+def nemoguard_parse_response_safety(response: str) -> Tuple[bool, List[str]]:
     """Analyzes a given model response from a Guardrails check (e.g., content safety check or output check) and determines if the content is safe or not.
 
-    The function operates based on the following expected structured JSON output from the Aegis 2.0 model.
+    The function operates based on the following expected structured JSON output from the NemoGuard ContentSafety model.
 
     {
         "User Safety": "unsafe",

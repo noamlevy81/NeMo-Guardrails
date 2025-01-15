@@ -1,7 +1,7 @@
-# Llama 3.1 Aegis Guard 2.0 Deployment Instructions
-The Aegis Guard model will be available to download as a LoRA adapter module through HuggingFace, and as an [NVIDIA NIM](https://docs.nvidia.com/nim/large-language-models/latest/introduction.html) for low latency optimized inference with [NVIDIA TensorRT-LLM](https://docs.nvidia.com/tensorrt-llm/index.html).
+# Llama-3.1-Nemoguard-8B-Topic-Control Deployment Instructions
+The TopicControl model will be available to download as a LoRA adapter module through HuggingFace, and as an [NVIDIA NIM](https://docs.nvidia.com/nim/#nemoguard) for low latency optimized inference with [NVIDIA TensorRT-LLM](https://docs.nvidia.com/tensorrt-llm/index.html).
 
-This guide covers how to deploy the Aegis Guard model as a NIM, and how to then use the deployed NIM in a NeMo Guardrails configuration.
+This guide covers how to deploy the TopicControl model as a NIM, and how to then use the deployed NIM in a NeMo Guardrails configuration.
 
 ## NIM Deployment
 
@@ -13,11 +13,11 @@ export NGC_API_KEY=<your NGC API key>
 docker login nvcr.io -u "$oauthtoken" -p <<< <your NGC API key>
 ```
 
-Test that you are able to use the NVIDIA NIM assets through by pulling the latest Aegis Guard container.
+Test that you are able to use the NVIDIA NIM assets through by pulling the latest TopicControl container.
 
 ```bash
 export NIM_IMAGE=<Path to latest NIM docker container>
-export MODEL_NAME="llama-3.1-aegis-guard-2.0"
+export MODEL_NAME="llama-3.1-nemoguard-8b-topic-control"
 docker pull $NIM_IMAGE
 ```
 
@@ -34,7 +34,7 @@ docker run -it --name=$MODEL_NAME \
 ```
 
 #### Use the running NIM in your Guardrails App
-Any locally running NIM exposes the standard OpenAI interface on the `v1/completions` and `v1/chat/completions` endpoints. NeMo Guardrails provides out of the box support engines that support the standard LLM interfaces. One such engine is LangChain's `vllm_openai`.
+Any locally running NIM exposes the standard OpenAI interface on the `v1/completions` and `v1/chat/completions` endpoints. NeMo Guardrails provides out of the box support engines that support the standard LLM interfaces. For locally deployed NIMs, you need to use the engine `nim`.
 
 Thus, your Guardrails configuration file can look like:
 ```yml
@@ -43,29 +43,26 @@ models:
     engine: openai
     model: gpt-3.5-turbo-instruct
 
-  - type: "llama-3.1-aegis-guard-2.0"
+  - type: "topic_control"
     engine: nim
     parameters:
       base_url: "http://localhost:8123/v1"
-      model_name: "llama-3.1-aegis-guard-2.0"
+      model_name: "llama-3.1-nemoguard-8b-topic-control"
 
 rails:
   input:
     flows:
-      - content safety check input $model=llama-3.1-aegis-guard-2.0
-  output:
-    flows:
-      - content safety check output $model=llama-3.1-aegis-guard-2.0
+      - topic safety check input $model=topic_control
 ```
 A few things to note:
 - `parameters.base_url` should contain the IP address of the machine the NIM was hosted on, the port should match the tunnel forwarding port specified in the docker run command.
 - `parameters.model_name` in the Guardrails configuration needs to match the `$MODEL_NAME` used when running the NIM container.
-- The `rails` definitions should list `llama-3.1-aegis-guard-2.0` as the model.
+- The `rails` definitions should list `topic_control` as the model.
 
 #### Bonus: Caching the optimized TRTLLM inference engines
 If you'd like to not build TRTLLM engines from scratch every time you run the NIM container, you can cache it in the first run by just adding a flag to mount a local directory inside the docker to store the model cache.
 
-To achieve this, you simply need to mount the folder containing the cached TRTLLM assets onto the docker container while running it using `-v $LOCAL_NIM_CACHE:/opt/nim/.cache`. See below instructions for the full command. Important: make sure that docker has permissions to write to the cache folder (`sudo chmod 777 $LOCAL_NIM_CACHE`).
+To achieve this, you simply need to mount the folder containing the cached TRTLLM assets onto the docker container while running it using `-v $LOCAL_NIM_CACHE:/opt/nim/.cache`. See below instructions for the full command. Important: make sure that docker has permissions to write to the cache folder (`sudo chmod 666 $LOCAL_NIM_CACHE`).
 ```bash
 ### To bind a $LOCAL_NIM_CACHE folder to "/opt/nim/.cache"
 export LOCAL_NIM_CACHE=<PATH TO DIRECTORY WHERE YOU WANT TO SAVE TRTLLM ENGINE ASSETS>
@@ -85,3 +82,11 @@ docker run -it --name=$MODEL_NAME \
     -p 8123:8000 \
     $NIM_IMAGE
 ```
+
+## More details on TopicControl model
+
+For more details on the TopicControl model, check out the other resources:
+
+- NeMo Guardrails library for [NVIDIA NemoGuard models](../guardrails-library.md#nvidia-models)
+- [TopicControl topic safety example config](../../../examples/configs/topic_safety/README.md)
+- [Paper at EMNLP 2024](https://arxiv.org/abs/2404.03820)

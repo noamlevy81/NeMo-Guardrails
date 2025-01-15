@@ -1,7 +1,7 @@
-# Llama-3.1-Nemoguard-8B-Topic-Control Deployment Instructions
-The TopicControl model will be available to download as a LoRA adapter module through HuggingFace, and as an [NVIDIA NIM](https://docs.nvidia.com/nim/large-language-models/latest/introduction.html) for low latency optimized inference with [NVIDIA TensorRT-LLM](https://docs.nvidia.com/tensorrt-llm/index.html).
+# Llama 3.1 NemoGuard 8B ContentSafety Deployment Instructions
+The Llama 3.1 NemoGuard 8B ContentSafety model will be available to download as a LoRA adapter module through HuggingFace, and as an [NVIDIA NIM](https://docs.nvidia.com/nim/#nemoguard) for low latency optimized inference with [NVIDIA TensorRT-LLM](https://docs.nvidia.com/tensorrt-llm/index.html).
 
-This guide covers how to deploy the TopicControl model as a NIM, and how to then use the deployed NIM in a NeMo Guardrails configuration.
+This guide covers how to deploy [NemoGuard NIMs](https://docs.nvidia.com/nim/#nemoguard), and how to then use the deployed NIM in a NeMo Guardrails configuration.
 
 ## NIM Deployment
 
@@ -13,11 +13,11 @@ export NGC_API_KEY=<your NGC API key>
 docker login nvcr.io -u "$oauthtoken" -p <<< <your NGC API key>
 ```
 
-Test that you are able to use the NVIDIA NIM assets through by pulling the latest TopicControl container.
+Test that you are able to use the NVIDIA NIM assets through by pulling the latest NemoGuard container.
 
 ```bash
 export NIM_IMAGE=<Path to latest NIM docker container>
-export MODEL_NAME="llama-3.1-nemoguard-8b-topic-control"
+export MODEL_NAME="llama-3.1-nemoguard-8b-content-safety"
 docker pull $NIM_IMAGE
 ```
 
@@ -34,7 +34,7 @@ docker run -it --name=$MODEL_NAME \
 ```
 
 #### Use the running NIM in your Guardrails App
-Any locally running NIM exposes the standard OpenAI interface on the `v1/completions` and `v1/chat/completions` endpoints. NeMo Guardrails provides out of the box support engines that support the standard LLM interfaces. For locally deployed NIMs, you need to use the engine `nim`.
+Any locally running NIM exposes the standard OpenAI interface on the `v1/completions` and `v1/chat/completions` endpoints. NeMo Guardrails provides out of the box support engines that support the standard LLM interfaces. One such engine is LangChain's `vllm_openai`.
 
 Thus, your Guardrails configuration file can look like:
 ```yml
@@ -43,21 +43,24 @@ models:
     engine: openai
     model: gpt-3.5-turbo-instruct
 
-  - type: "topic_control"
+  - type: "content_safety"
     engine: nim
     parameters:
       base_url: "http://localhost:8123/v1"
-      model_name: "llama-3.1-nemoguard-8b-topic-control"
+      model_name: "llama-3.1-nemoguard-8b-content-safety"
 
 rails:
   input:
     flows:
-      - topic safety check input $model=topic_control
+      - content safety check input $model=content_safety
+  output:
+    flows:
+      - content safety check output $model=content_safety
 ```
 A few things to note:
 - `parameters.base_url` should contain the IP address of the machine the NIM was hosted on, the port should match the tunnel forwarding port specified in the docker run command.
 - `parameters.model_name` in the Guardrails configuration needs to match the `$MODEL_NAME` used when running the NIM container.
-- The `rails` definitions should list `topic_control` as the model.
+- The `rails` definitions should list `llama-3.1-nemoguard-8b-content-safety` as the model.
 
 #### Bonus: Caching the optimized TRTLLM inference engines
 If you'd like to not build TRTLLM engines from scratch every time you run the NIM container, you can cache it in the first run by just adding a flag to mount a local directory inside the docker to store the model cache.
@@ -82,11 +85,3 @@ docker run -it --name=$MODEL_NAME \
     -p 8123:8000 \
     $NIM_IMAGE
 ```
-
-## More details on TopicControl model
-
-For more details on the TopicControl model, check out the other resources:
-
-- NeMo Guardrails library for [NVIDIA NemoGuard models](../guardrails-library.md#nvidia-models)
-- [TopicControl topic safety example config](../../../examples/configs/topic_safety/README.md)
-- [Paper at EMNLP 2024](https://arxiv.org/abs/2404.03820)
