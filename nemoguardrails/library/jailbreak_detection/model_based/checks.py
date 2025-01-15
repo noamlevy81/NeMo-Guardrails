@@ -30,7 +30,7 @@ models_path = os.environ.get("EMBEDDING_CLASSIFIER_PATH")
 
 # When we add NIM support, will need to remove this check.
 if models_path is None:
-    raise ValueError(
+    raise EnvironmentError(
         "Please set the EMBEDDING_CLASSIFIER_PATH environment variable to point to the Classifier model_based folder"
     )
 
