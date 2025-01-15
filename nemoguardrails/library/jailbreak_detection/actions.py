@@ -71,8 +71,8 @@ async def jailbreak_detection_model(
     llm_task_manager: LLMTaskManager,
     context: Optional[dict] = None,
 ) -> bool:
-    prompt: str = ""
-    """Uses a trained classifier to determine if a user input is a jailbreak attempt"""
+     """Uses a trained classifier to determine if a user input is a jailbreak attempt"""
+     prompt: str = ""
     jailbreak_config = llm_task_manager.config.rails.config.jailbreak_detection
 
     jailbreak_api_url = jailbreak_config.server_endpoint
