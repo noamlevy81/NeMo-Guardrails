@@ -170,7 +170,7 @@ We see that the prompt was not filtered out by the jailbreak detection heuristic
 
 ### Using the Jailbreak Detection Heuristics in Production
 
-The recommended way for using the jailbreak detection heuristics is to [deploy the jailbreak detection heuristics server](../user-guides/advanced/jailbreak-detection-deployment.md) separately. This would spin up a server that by default listens on port 1337. You can then configure the guardrails configuration to use the jailbreak detection heuristics server by adding the following to the [config.yml](../../getting-started/6-topical-rails/config/config.yml) of the ABC bot:
+The recommended way for using the jailbreak detection heuristics is to [deploy the jailbreak detection heuristics server](../../user-guides/advanced/jailbreak-detection-deployment.md) separately. This would spin up a server that by default listens on port 1337. You can then configure the guardrails configuration to use the jailbreak detection heuristics server by adding the following to the [config.yml](../../getting-started/6-topical-rails/config/config.yml) of the ABC bot:
 
 ```colang
 rails:
