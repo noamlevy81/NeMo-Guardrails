@@ -18,8 +18,6 @@ jobs:
         os: [Windows, macOS] # exclude Ubuntu as it is available in pr-tests
         python-version: ["3.9", "3.10", "3.11"]
         include:
-          - os: Ubuntu
-            image: ubuntu-latest
           - os: Windows
             image: windows-2022
           - os: macOS

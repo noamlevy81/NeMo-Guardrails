@@ -74,7 +74,7 @@ The following guides explain in more details various specific topics:
 * [Extract User-provided Values](user-guides/advanced/extract-user-provided-values.md): Learn how to extract user-provided values like a name, a date or a query.
 * [Bot Message Instructions](user-guides/advanced/bot-message-instructions.md): Learn how to further tweak the bot messages with specific instructions at runtime.
 * [Event-based API](user-guides/advanced/event-based-api.md): Learn about the generic event-based interface that you can use to process additional information in your guardrails configuration.
-* [Jailbreak Detection Heuristics Deployment](user-guides/advanced/jailbreak-detection-heuristics-deployment.md): Learn how to deploy the jailbreak detection heuristics server.
+* [Jailbreak Detection Heuristics Deployment](user-guides/advanced/jailbreak-detection-deployment.md): Learn how to deploy the jailbreak detection heuristics server.
 * [Llama Guard Deployment](user-guides/advanced/llama-guard-deployment.md): Learn how to deploy Llama Guard using vLLM.
 * [Nested AsyncIO Loop](user-guides/advanced/nested-async-loop.md): Understand some of the low level issues regarding `asyncio` and how they are handled in NeMo Guardrails.
 * [Vertex AI Setup](user-guides/advanced/vertexai-setup.md): Learn how to setup a Vertex AI account.

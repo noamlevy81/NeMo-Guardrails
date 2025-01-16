@@ -398,6 +398,10 @@ class JailbreakDetectionConfig(BaseModel):
     prefix_suffix_perplexity_threshold: float = Field(
         default=1845.65, description="The prefix/suffix perplexity threshold."
     )
+    embedding: str = Field(
+        default="nvidia/nv-embedqa-e5-v5",
+        description="Model to use for embedding-based detections.",
+    )
 
 
 class AutoAlignOptions(BaseModel):

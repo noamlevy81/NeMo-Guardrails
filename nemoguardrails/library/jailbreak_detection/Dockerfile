@@ -21,6 +21,11 @@ ENV JAILBREAK_CHECK_DEVICE=cpu
 # Predownload the GPT2 model.
 RUN python -c "from transformers import GPT2LMHeadModel, GPT2TokenizerFast; GPT2LMHeadModel.from_pretrained('gpt2-large'); GPT2TokenizerFast.from_pretrained('gpt2-large');"
 
+# Predownload embedding-based jailbreak detection models, set environment variable for path
+WORKDIR /models
+RUN git clone git@hf.co:/nvidia/NemoGuard-JailbreakDetect
+ENV EMBEDDING_CLASSIFIER_PATH=/models/NemoGuard-JailbreakDetect
+
 # Expose a port for the server
 EXPOSE 1337
 

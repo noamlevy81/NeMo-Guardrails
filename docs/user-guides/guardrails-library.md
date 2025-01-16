@@ -697,26 +697,6 @@ rails:
 
 For more details, check out the [ActiveFence Integration](./community/active-fence.md) page.
 
-### Got It AI
-
-```{warning}
-**Deprecation Notice:**
-The Got It AI integration has been deprecated and will be discontinued on 15th December, 2024.
-```
-
-NeMo Guardrails integrates with [Got It AI's Hallucination Manager](https://www.app.got-it.ai/hallucination-manager) for hallucination detection in RAG systems. To integrate the TruthChecker API with NeMo Guardrails, the `GOTITAI_API_KEY` environment variable needs to be set.
-
-#### Example usage
-
-```yaml
-rails:
-  output:
-    flows:
-      - gotitai rag truthcheck
-```
-
-For more details, check out the [Got It AI Integration](./community/gotitai.md) page.
-
 ### AutoAlign
 
 NeMo Guardrails supports using the AutoAlign's guardrails API (you need to have the `AUTOALIGN_API_KEY` environment variable set).
@@ -924,9 +904,13 @@ To compute the perplexity of a string, the current implementation uses the `gpt2
 
 **NOTE**: in future versions, multiple options will be supported.
 
+#### Model-based Jailbreak Detections
+
+There is currently one available model-based detection, using a random forest-based detector trained on [`snowflake/snowflake-arctic-embed-m-long`](https://huggingface.co/Snowflake/snowflake-arctic-embed-m-long) embeddings.
+
 #### Setup
 
-The recommended way for using the jailbreak detection heuristics is to [deploy the jailbreak detection heuristics server](advanced/jailbreak-detection-heuristics-deployment.md) separately.
+The recommended way for using the jailbreak detection heuristics and models is to [deploy the jailbreak detection server](advanced/jailbreak-detection-deployment.md) separately.
 
 For quick testing, you can use the jailbreak detection heuristics rail locally by first installing `transformers` and `tourch`.
 
