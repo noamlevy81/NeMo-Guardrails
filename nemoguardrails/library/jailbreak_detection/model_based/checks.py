@@ -14,17 +14,17 @@
 # limitations under the License.
 
 import os
-from pathlib import Path
 import pickle
-import numpy as np
-from typing import Union, Tuple
 from functools import lru_cache
+from pathlib import Path
+from typing import Tuple, Union
+
+import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 
 from nemoguardrails.library.jailbreak_detection.model_based.models import (
     JailbreakClassifier,
 )
-
 
 models_path = os.environ.get("EMBEDDING_CLASSIFIER_PATH")
 

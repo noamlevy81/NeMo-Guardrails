@@ -834,7 +834,6 @@ To compute the perplexity of a string, the current implementation uses the `gpt2
 #### Model-based Jailbreak Detections
 
 There is currently one available model-based detection, using a random forest-based detector trained on [`snowflake/snowflake-arctic-embed-m-long`](https://huggingface.co/Snowflake/snowflake-arctic-embed-m-long) embeddings.
-This model 
 
 #### Setup
 

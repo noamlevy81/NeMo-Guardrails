@@ -16,9 +16,10 @@
 import os
 import pickle
 from typing import Tuple
-import torch
+
 import numpy as np
-from transformers import AutoTokenizer, AutoModel
+import torch
+from transformers import AutoModel, AutoTokenizer
 
 
 class SnowflakeEmbed:
