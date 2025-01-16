@@ -5405,9 +5405,9 @@ eval = ["numpy", "streamlit", "tqdm"]
 gcp = ["google-cloud-language"]
 openai = ["langchain-openai"]
 sdd = ["presidio-analyzer", "presidio-anonymizer", "spacy"]
-trace = ["aiofiles", "opentelemetry-api", "opentelemetry-sdk"]
+tracing = ["aiofiles", "opentelemetry-api", "opentelemetry-sdk"]
 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,!=3.9.7,<3.12"
-content-hash = "cbd1dd6d690c9fe1c9d0df32f3b6bbdee822517ab49506a7036f0221ba528967"
+content-hash = "59e37d251a174c60945cb0af41b52a18f31fb9cff27ccbc0df0ebdad87d6f080"
