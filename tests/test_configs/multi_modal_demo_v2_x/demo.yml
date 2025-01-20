@@ -9,7 +9,6 @@ models:
       # model: gpt-4o
       # model: gpt-4o-mini
 
-      #engine: nim
       # model: meta/llama3-8b-instruct
       # model: meta/llama3-70b-instruct
       # model: meta/llama-3.1-8b-instruct

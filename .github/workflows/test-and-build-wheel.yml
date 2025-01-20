@@ -18,7 +18,7 @@ jobs:
       POETRY_VERSION: "1.8.2"
       PYTHON_VERSION: "3.11"
     outputs:
-      wheel_file: ${{ steps.build.outputs.wheel_file }}
+      artifact_name: ${{ steps.set-artifact-name.outputs.artifact_name }}
     steps:
       - uses: actions/checkout@v4
 
@@ -30,7 +30,7 @@ jobs:
       - name: Get full Python version
         id: full-python-version
         run: |
-          echo "version=$(python -c 'import sys; print("-".join(str(v) for v in sys.version_info[:3]))')" >> $GITHUB_OUTPUT
+          echo "version=$(python -c 'import sys; print(\"-\".join(str(v) for v in sys.version_info[:3]))')" >> $GITHUB_OUTPUT
 
       - name: Bootstrap poetry
         run: |
@@ -56,18 +56,30 @@ jobs:
       - name: Make build script executable
         run: chmod +x ./.github/scripts/build.sh
 
-      - name: Build Wheel
+      - name: Build Distributions
         id: build
         run: |
           ./.github/scripts/build.sh
-          WHEEL_FILE=$(ls dist/*.whl | xargs -n 1 basename)
-          echo "wheel_file=${WHEEL_FILE}" >> $GITHUB_OUTPUT
 
-      - name: Upload Artifact
+      - name: Determine Tag Name
+        id: get-tag-name
+        if: startsWith(github.ref, 'refs/tags/')
+        run: echo "tag_name=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Set Artifact Name
+        id: set-artifact-name
+        run: |
+          if [ -n "${{ steps.get-tag-name.outputs.tag_name }}" ]; then
+            echo "artifact_name=${{ steps.get-tag-name.outputs.tag_name }}-build" >> $GITHUB_OUTPUT
+          else
+            echo "artifact_name=pr-build" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: built-wheel
-          path: dist/*.whl
+          name: ${{ steps.set-artifact-name.outputs.artifact_name }}
+          path: dist/*
 
   test-wheel:
     needs: build-wheel
@@ -81,10 +93,10 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Download Artifact
+      - name: Download Build Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: built-wheel
+          name: ${{ needs.build-wheel.outputs.artifact_name }}
 
       - name: List Files
         run: ls -l
@@ -93,7 +105,7 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install poetry==1.8.2
-          pip install ${{ needs.build-wheel.outputs.wheel_file }}
+          pip install ./*.whl
 
       - name: Start server in the background
         run: |

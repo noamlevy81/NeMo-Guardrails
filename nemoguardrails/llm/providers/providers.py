@@ -57,7 +57,7 @@ _providers: Dict[str, Optional[Type[BaseLLM]]] = {
     "nemollm": NeMoLLM,
     "trt_llm": TRTLLM,
     "nvidia_ai_endpoints": None,
-    "nim": None,
+    "nim": None,  # Later patched to "nvidia_ai_endpoints" (synonymous).
 }
 
 

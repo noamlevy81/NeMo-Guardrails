@@ -42,6 +42,8 @@ from nemoguardrails.llm.output_parsers import (
     bot_intent_parser,
     bot_message_parser,
     is_content_safe,
+    nemoguard_parse_prompt_safety,
+    nemoguard_parse_response_safety,
     user_intent_parser,
     verbose_v1_parser,
 )
@@ -86,6 +88,8 @@ class LLMTaskManager:
             "bot_message": bot_message_parser,
             "verbose_v1": verbose_v1_parser,
             "is_content_safe": is_content_safe,
+            "nemoguard_parse_prompt_safety": nemoguard_parse_prompt_safety,
+            "nemoguard_parse_response_safety": nemoguard_parse_response_safety,
         }
 
         # The prompt context will hold additional variables that ce also be included

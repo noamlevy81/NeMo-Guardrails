@@ -12,10 +12,14 @@ Advanced
    event-based-api
    extract-user-provided-values
    generation-options
-   jailbreak-detection-heuristics-deployment
+   jailbreak-detection-deployment
    llama-guard-deployment
    nested-async-loop
    prompt-customization
    streaming
    using-docker
    vertexai-setup
+   nemoguard-contentsafety-deployment
+   nemoguard-topiccontrol-deployment
+   jailbreak-detection-heuristics-deployment
+   safeguarding-ai-virtual-assistant-blueprint
