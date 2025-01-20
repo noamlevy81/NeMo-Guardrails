@@ -619,10 +619,10 @@ NeMo Guardrails supports using the [ActiveFence ActiveScore API](https://docs.ac
 rails:
   input:
     flows:
-      - activefence moderation
+      - activefence moderation on input
   output:
     flows:
-      - activefence moderation
+      - activefence moderation on output
 ```
 
 For more details, check out the [ActiveFence Integration](./community/active-fence.md) page.

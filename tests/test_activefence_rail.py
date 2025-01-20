@@ -43,7 +43,7 @@ def test_input(monkeypatch):
             rails:
               input:
                 flows:
-                  - activefence moderation
+                  - activefence moderation on input
         """,
     )
     chat = TestChat(
@@ -103,7 +103,7 @@ def test_output(monkeypatch):
             rails:
               output:
                 flows:
-                  - activefence moderation
+                  - activefence moderation on output
         """,
     )
     chat = TestChat(

@@ -164,7 +164,7 @@ rails:
     flows:
       - self check facts
       - self check hallucination
-      - activefence moderation
+      - activefence moderation on input
       - gotitai rag truthcheck
 
   config:
